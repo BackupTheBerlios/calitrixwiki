@@ -30,6 +30,7 @@
 <select name="step">
 <option value="license" selected="selected">{$lang.req_install_new}</option>
 <option value="updateb1">{$lang.req_update_beta1}</option>
+<option value="updateb2">{$lang.req_update_beta2}</option>
 </select><br /><br />
 
 <input type="submit" value="{$lang.next}" />
