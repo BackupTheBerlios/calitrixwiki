@@ -67,7 +67,6 @@ class installer_updateb1 extends installer
 		mysql_query('CREATE TABLE '.DB_PREFIX.'config(config_section VARCHAR(30) NOT NULL, config_item '.
 		'VARCHAR(100) NOT NULL, config_value TEXT NOT NULL, PRIMARY KEY (config_section, config_item))');
 		mysql_query('UPDATE '.DB_PREFIX.'users SET user_access_mask = -1 WHERE user_access_mask = 0');
-		mysql_query('ALTER TABLE '.DB_PREFIX.'users CHANGE user_access_mask user_access_mask INT( 5 ) DEFAULT -1 NOT NULL');
 		
 		$cfg = $this->createConfigTable($setFile);
 		$cfg = $this->createConfigFile($cfg, $setFile);
@@ -104,7 +103,7 @@ class installer_updateb1 extends installer
 		$cfg['wiki_version']                      = '1.0 Beta 2';
 		$cfg['install_time']                      = $this->time;
 		$cfg['default_theme']                     = 'cw10b2';
-		$cfg['themes']['cw']                      = 'CalitrixWiki 1.0 Beta 3';
+		$cfg['themes']['cw']                      = 'CalitrixWiki 1.0 Beta 2';
 		$cfg['actions']['options']                = 'options';
 		$cfg['actions']['print']                  = 'view';
 		$cfg['code_snippets']['link_email']       = '<a href="%1$s" class="wiki-email">%2$s</a>';
