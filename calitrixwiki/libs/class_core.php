@@ -32,6 +32,7 @@ class core
 	 var $cookie     = array();
 	 var $request    = array();
 	 var $server     = array();
+	 var $files      = array();
 	 var $cfg        = array();
 	 var $lang       = array();
 	 var $page       = array();
@@ -74,6 +75,7 @@ class core
 		$this->cookie  = &$_COOKIE;
 		$this->request = &$_SERVER['REQUEST_METHOD'];
 		$this->server  = &$_SERVER;
+		$this->files   = &$_FILES;
 		$this->cfg     = $cfg;
 		$this->time    = time();
 		
@@ -215,8 +217,12 @@ class core
 		if($this->loggedIn) {
 			$this->user       = $this->getUser($this->session['session_user_name']);
 			$this->lang       = $this->getLang($this->langCode);
-			$this->accessMask = (int)$this->user['group_access_mask'] | (int)$this->user['user_access_mask'];
 			
+			if($this->user['user_access_mask'] >= 0) {
+				$this->accessMask = (int)$this->user['group_access_mask'] | (int)$this->user['user_access_mask'];
+			} else {
+				$this->accessMask = (int)$this->user['group_access_mask'];
+			}
 		} else {
 			$this->user       = $this->getUser();
 			$this->lang       = $this->getLang($this->langCode);
@@ -820,6 +826,7 @@ class core
 		$tpl->assign('canEdit',     $this->hasPerms(PERM_EDIT));
 		$tpl->assign('canHistory',  $this->hasPerms(PERM_HISTORY));
 		$tpl->assign('canSetLocal', $this->hasPerms(PERM_SETLOCAL));
+		$tpl->assign('canUseAcp',   $this->hasPerms(PERM_USEACP));
 	}
 	
 	/**
@@ -896,6 +903,46 @@ class core
 			header('Location: '.$URL);
 		}
 		exit;
+	}
+	
+	/**
+	 * Formats a filesize from bytes to an human readable
+	 * string and adds the byte units (kilo, mega, giga, ...).
+	 *
+	 * @author Johannes Klose <exe@calitrix.de>
+	 * @param  int    $bytes         Number of bytes to be formated
+	 * @param  int    $precision = 2 Number of digits after the decimal points
+	 * @return string                String with filesize and unit
+	 **/
+	function HRFileSize($bytes, $precision = 2)
+	{
+		if($bytes < 1024) {
+			return $bytes.' Bytes';
+		}
+		
+		$bytes = round($bytes / 1024, $precision);
+		
+		if($bytes < 1024) {
+			return $bytes.' KB';
+		}
+		
+		$bytes = round($bytes / 1024, $precision);
+		
+		if($bytes < 1024) {
+			return $bytes.' MB';
+		}
+		
+		$bytes = round($bytes / 1024, $precision);
+		
+		if($bytes < 1024) {
+			return $bytes.' GB';
+		}
+		
+		$bytes = round($bytes / 1024, $precision);
+		
+		if($bytes < 1024) {
+			return $bytes.' TB';
+		}
 	}
 	
 	/**

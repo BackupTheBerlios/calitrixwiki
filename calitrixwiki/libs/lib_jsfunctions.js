@@ -20,6 +20,14 @@ function setCheckBoxes(setForm, setElement, setStatus)
 }
 
 //
+// Checks/unchecks a checkbox by its id.
+//
+function toggleCheckBox(boxId)
+{
+	document.getElementById(boxId).checked = document.getElementById(boxId).checked ? false : true;
+}
+
+//
 // Displays/Hides a box
 //
 function toggleBox(id)
@@ -49,4 +57,25 @@ function toggleFormBox(id)
         disabled = true;
     }
     document.getElementById(id).disabled = disabled;
+}
+
+//
+// Lets an admin test a wikistyle before saving it
+//
+function testWikiStyle()
+{
+	var nw = window.open('about:blank', 'styletest', 'height=200,width=400,location=no,menubar=no,resizable=yes,scrollbars=yes,status=no,toolbar=no');
+	
+	nw.document.write("<html>\n<head>\n<title>Test</title>\n<body>\n<span style=\"");
+	
+	var styleString  = document.editstyle.style_attribs.value;
+	var styleAttribs = styleString.split("\n");
+	
+	for(i = 0; i < styleAttribs.length; i++)
+	{
+		var styleAttrib = styleAttribs[i].split(':');
+		nw.document.write(styleAttrib[0] + ':' + styleAttrib[1] + ';');
+	}
+	
+	nw.document.write("\">" + document.editstyle.style_name.value + "</span>\n</body>\n</html>");
 }

@@ -33,8 +33,24 @@ $starttime = $starttime[1] + $starttime[0];
  
 error_reporting(E_ALL);
 
-include 'settings/stdconfig.php';
-include 'settings/dbconfig.php';
+/**
+ * Define some constants needed by the wiki
+ **/
+define('CWIKI_STDCONFIG', 'settings/stdconfig.php');
+define('CWIKI_DBCONFIG',  'settings/dbconfig.php');
+define('CWIKI_VERSION',    '1.0 Beta 1');
+define('PERM_VIEW',        1);    // Permission to view pages.
+define('PERM_EDIT',        2);    // Permission to edit pages.
+define('PERM_HISTORY',     4);    // Permission to view the history.
+define('PERM_RESTORE',     8);    // Permission to restore old versions.
+define('PERM_RENAME',      128);  // Permission to rename a page.
+define('PERM_DELETE',      256);  // Permission to delete a page.
+define('PERM_IGNORELOCAL', 512);  // Permission to ignore local access masks.
+define('PERM_SETLOCAL',    1024); // Permission to modify local access masks.
+define('PERM_USEACP',      2048); // Permission to use the acp.
+
+include CWIKI_STDCONFIG;
+include CWIKI_DBCONFIG;
 include $cfg['lib_dir'].'/class_database.php';
 include $cfg['lib_dir'].'/class_template.php';
 include $cfg['lib_dir'].'/class_parser.php';

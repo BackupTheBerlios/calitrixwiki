@@ -26,6 +26,9 @@
  {if $loggedIn}
  <h1>{$user.user_name}</h1>
  <ul>
+  {if $canUseAcp}
+  <li><a href="{wikiurl page="`$cfg.special_namespace`:Admin"}" class="wiki-internal">{$lang.admin_cp}</a></li>
+  {/if}
   <li><a href="{wikiurl page="`$cfg.special_namespace`:Preferences"}" class="wiki-internal">{$lang.wiki_user_prefs}</a></li>
   <li><a href="{wikiurl page="`$cfg.special_namespace`:Logout"}" class="wiki-internal">{$lang.wiki_logout}</a></li>
  </ul>

@@ -49,6 +49,7 @@ class template extends Smarty
 		$this->use_sub_dirs    = false;        
 		$this->left_delimiter  = '{';
 		$this->right_delimiter = '}';
+		$this->error_reporting = E_ALL;
 		
 		$this->register_function('wikiplugin', array(&$this, 'wikiPlugin'));
 		$this->register_function('wikiurl',    array(&$this, 'genTplUrl'));
