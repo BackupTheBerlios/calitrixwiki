@@ -83,7 +83,7 @@ class parser
 		// Maybe this function should be split up into several smaller ones...
 		global $wiki;
 		
-		$this->pageParsing = $page['page_name'];
+		$this->pageName  = $wiki->getUniqueName($page);
 		$this->createUserVars($page);
 		$this->wikiStyles = $wiki->cfg['wiki_styles'];
 		
@@ -945,17 +945,23 @@ class parser
 		
 		$trailPages = array();
 		
-		$text = $page['page_text'];
-		$text = preg_replace('/^(\*|#)+ (?:\[\[)?('.$wiki->cfg['title_format'].')/me', '$this->getTrailPage(\'\2\', &$trailPages)', $text);
-		
-		$linkLeft = '';
+		$text      = $page['page_text'];
+		$text      = preg_replace('/^(\*|#)+ (?:\[\[)?('.$wiki->cfg['title_format'].')/me', '$this->getTrailPage(\'\2\', &$trailPages)', $text);
+		$linkLeft  = '';
 		$linkRight = '';
 		
 		for($i = 0; $i < count($trailPages); $i++)
 		{
-			$pageName = $trailPages[$i];
+			$pageInfo  = explode(':', $trailPages[$i]);
+			if(count($pageInfo) == 2) {
+				$pageInfo = array('page_name' => $pageInfo[1],
+				                  'page_namespace' => $pageInfo[0]);
+			} else {
+				$pageInfo = array('page_name' => $pageInfo[0],
+				                  'page_namespace' => $wiki->cfg['default_namespace']);
+			}
 			
-			if($pageName == $this->pageParsing) {
+			if($wiki->getUniqueName($pageInfo) == $this->pageName) {
 				if($i > 0) {
 					$url = $wiki->genUrl($trailPages[$i - 1]);
 					$linkLeft = sprintf($wiki->cfg['code_snippets']['trail_linkleft'], 
@@ -974,7 +980,7 @@ class parser
 			}
 		}
 		
-		$url        = $wiki->genUrl($trailPage);
+		$url        = $wiki->genUrl($wiki->getUniqueName($page));
 		$linkMiddle = sprintf($wiki->cfg['code_snippets']['trail'], 
 		                      $linkLeft, $url, $trailPage, $linkRight);
 		
