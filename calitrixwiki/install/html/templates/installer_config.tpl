@@ -4,7 +4,7 @@
 {$lang.config_desc}
 </p>
 
-<form method="post" action="{wikiurl step="config" lang="`$lang`"}">
+<form method="post" action="{wikiurl step="config" lang="`$currentLang`"}">
 <fieldset>
 <legend>{$lang.config_paths}</legend>
 {$lang.config_paths_url_root}<br />
@@ -29,7 +29,8 @@
 <input type="password" name="db_pass" value="" size="40" /><br /><br />
 
 {$lang.config_db_prefix}<br />
-<input type="text" name="db_prefix" value="{$cfgDbPrefix}" size="40" /><br /><br />
+<input type="text" name="db_prefix" value="{$cfgDbPrefix}" size="40" />
+
 </fieldset>
 
 <fieldset>

@@ -109,7 +109,7 @@ class installer
 	}
 	
 	/**
-	 * Generates a url to the installer.
+	 * Generates a url.
 	 *
 	 * @author Johannes Klose <exe@calitrix.de>
 	 * @param  array  $params Url parameters
@@ -127,6 +127,43 @@ class installer
 		
 		$url .= join('&', $tmp);
 		return $url;
+	}
+	
+	/**
+	 * Transforms a array into php-code.
+	 *
+	 * @author Johannes Klose <exe@calitrix.de>
+	 * @param  array  $array  Array to dump
+	 * @return string         PHP code
+	 **/
+	function rdumpArray($array, $indent = 0)
+	{
+		$code = 'array('."\n";
+		
+		$maxLen = 0;
+		
+		foreach($array as $key => $val)
+		{
+			$maxLen = strlen($key) > $maxLen ? strlen($key) : $maxLen;
+		}
+		
+		foreach($array as $key => $val)
+		{
+			if(is_array($val)) {
+				$indent2 = $maxLen - strlen($key);
+				$nIndent = $indent + strlen($key) + 12 + $indent2;
+				$code   .= str_repeat(' ', $indent).'\''.$key.'\''.str_repeat(' ', $indent2).' => '.$this->rdumpArray($val, $nIndent).",\n";
+			} else {
+				$val      = str_replace('\'',   '\\\'',         $val);
+				$val      = str_replace("\r\n", '\'."\r\n".\'', $val);
+				$val      = str_replace("\n",   '\'."\n".\'',   $val);
+				$indent2  = $maxLen - strlen($key);
+				$code    .= str_repeat(' ', $indent).'\''.$key.'\''.str_repeat(' ', $indent2).' => \''.$val.'\','."\n";
+			}
+		}
+		
+		$code = substr($code, 0, strlen($code) - 2)."\n".str_repeat(' ', $indent).')';
+		return $code;
 	}
 	
 	/**

@@ -27,6 +27,7 @@ define('CWIKI_DOC_ROOT',     realpath(CWIKI_INSTALL_DIR.'/..'));
 define('CWIKI_LIB_DIR',      CWIKI_DOC_ROOT.'/libs');
 define('CWIKI_SET_DIR',      CWIKI_DOC_ROOT.'/settings');
 define('CWIKI_DEFAULT_LANG', 'de');
+define('CWIKI_ADMIN_GROUP',  3);
 
 $languages = array('de' => 'Deutsch');
 
