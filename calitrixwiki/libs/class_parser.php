@@ -28,12 +28,14 @@ class parser
 {
 	var $preformatedTexts = array();
 	var $noParseSections  = array();
-	var $pageParsing      = '';
+	var $pageName         = '';
 	var $wikiStyles       = array();
 	var $headlines        = array();
 	var $userVars         = array();
 	var $interWiki        = array();
 	var $headings         = array();
+	var $existingPages    = array();
+	var $linkedPages      = array();
 	
 	function escapeText($text) { return htmlentities($text); }
 	/**
@@ -168,9 +170,12 @@ class parser
 		$text = preg_replace('/\[\['.$wiki->cfg['title_format'].'( .+?)?\]\]([a-z]+)?/e',
 		                     '$this->makeWikiLink(\'\2\', \'\3\', \'\4\', \'\1\')',
 		                     $text); // Internal links with the double-bracket syntax
-		$text = preg_replace('/'.$wiki->cfg['title_format_search'].'/e',
-		                     '$this->makeWikiLink(\'\2\', \'\', \'\', \'\1\')',
-		                     $text); // Search for wiki words in the text and link them
+		
+		if($wiki->cfg['auto_link'] == 1) {
+			$text = preg_replace('/'.$wiki->cfg['title_format_search'].'/e',
+			                     '$this->makeWikiLinkFirst(\'\2\', \'\1\')',
+			                     $text); // Search for wiki words in the text and link them
+		}
 		
 		// Last (but not least) we parse a few more complicated markups.
 		$text = preg_replace('/\[TOC\]/ie', 
@@ -672,6 +677,45 @@ class parser
 	}
 	
 	/**
+	 * Checks wether an WikiWord shall be auto linked. This is controlled
+	 * by the link_num config setting.
+	 *
+	 * @author Johannes Klose <exe@calitrix.de>
+	 * @return
+	 **/
+	function makeWikiLinkFirst($page, $namespace = '')
+	{
+		global $wiki;
+		
+		$orig = $namespace.$page;
+		
+		if($namespace == '') {
+			$namespace = $wiki->cfg['default_namespace'];
+		} else {
+			$namespace = substr($namespace, 0, strlen($namespace) - 1);
+		}
+		
+		$pdata = array('page_name' => $page, 'page_namespace' => $namespace);
+		$pid   = $wiki->getUniqueName($pdata);
+		
+		if($wiki->cfg['link_self'] == 0 && $pid == $this->pageName) {
+			return $orig;
+		}
+		
+		if($wiki->cfg['link_num'] <= 0) {
+			return $this->makeWikiLink($page, '', '', $namespace.':');
+		}
+		
+		if(!isset($this->linkedPages[$pid])) {
+			$this->linkedPages[$pid] = 1;
+			return $this->makeWikiLink($page, '', '', $namespace.':');
+		} elseif($this->linkedPages[$pid] < $this->cfg['link_num']) {
+			$this->linkedPages[$pid]++;
+			return $this->makeWikiLink($page, '', '', $namespace.':');
+		}
+	}
+	
+	/**
 	 * This function generates the html-code for a internal link.
 	 *
 	 * @author Johannes Klose <exe@calitrix.de>
@@ -692,7 +736,12 @@ class parser
 		}
 		
 		$pageData = array('page_name' => $page, 'page_namespace' => $namespace);
-		$linkText = $page;
+		
+		if($wiki->cfg['space_wiki_words'] == 1) {
+			$linkText = $this->spaceWikiWord($page);
+		} else {
+			$linkText = $page;
+		}
 		
 		if(!isset($this->existingPages[$namespace][$page]) && $namespace != $wiki->cfg['special_namespace']) {
 			$linkURL  = $wiki->genUrl($wiki->getUniqueName($pageData), 'edit');
@@ -700,7 +749,7 @@ class parser
 			$linkURL  = $wiki->genUrl($wiki->getUniqueName($pageData));
 		}
 		
-		if($namespace != $wiki->cfg['default_namespace']) {
+		if($namespace != $wiki->cfg['default_namespace'] && $wiki->cfg['display_namespaces']) {
 			$linkText = $namespace.':'.$page;
 		}
 		
