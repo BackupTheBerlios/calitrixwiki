@@ -248,12 +248,12 @@ class diff
 				}
 			} else {
 				if(isset($origLines[$ol])) {
-					$origTextT[] = $origLines[$ol];
+					$origTextT[] = htmlentities($origLines[$ol]);
 					$ol++;
 				}
 				
 				if(isset($finalLines[$fl])) {
-					$finalTextT[] = array('type' => 'none', 'line' => $finalLines[$fl]);
+					$finalTextT[] = array('type' => 'none', 'line' => htmlentities($finalLines[$fl]));
 					$fl++;
 				}
 			}
