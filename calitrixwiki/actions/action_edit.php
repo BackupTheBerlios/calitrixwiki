@@ -121,16 +121,16 @@ class action_edit extends core
 		
 		if($this->loggedIn) {
 			$editUserId   = $this->user['user_id'];
-			$editUsername = '';
+			$editUsername = $this->user['user_name'];
 		} else {
 			$editUserId = 0;
 			$editUsername = isset($this->post['page_author']) ? trim($this->post['page_author']) : '';
 		}
 		
 		if($editUsername != '') {
-			if(is_array($this->getUser($editUsername, true))) {
-				$tpl->assign('isError', true);
-				$tpl->assign('errors',  array($this->lang['edit_username_taken']));
+			if(!$this->loggedIn && is_array($this->getUser($editUsername, true))) {
+				$tpl->assign('isError',    true);
+				$tpl->assign('errors',     array($this->lang['edit_username_taken']));
 				$tpl->assign('editText',   htmlentities($editText));
 				$tpl->assign('valAuthor',  htmlentities($editUsername));
 				$tpl->assign('valSummary', htmlentities($editSummary));
