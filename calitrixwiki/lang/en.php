@@ -22,8 +22,12 @@
 $lang = array(
 'error_unknown_request' => 'Ung&uuml;tiger Seitenname.',
 
-'wiki_search'               => 'Search',
-'wiki_search_submit'        => 'Go',
+'search'                    => 'Search',
+'search_submit'             => 'Go',
+'search_title'              => 'Search page titles',
+'search_fulltext'           => 'Full-text search',
+'search_results'            => 'Search results',
+'search_no_results'         => 'Your search has not matched any pages. Try to choose a different search term.',
 'wiki_toc'                  => 'Table of contents',
 'wiki_hide_toc'             => 'hide',
 'wiki_show_toc'             => 'show',
@@ -93,8 +97,6 @@ $lang = array(
 'history_addition'          => 'This line must be added.',
 'history_substraction'      => 'This line is to be deleted',
 'history_no_change'         => 'This line is unchanged.',
-'search_results'            => 'Search results',
-'search_no_results'         => 'Your search has not matched any pages. Try to choose a different search term.',
 'login_cookies'             => 'Cookies must be activated.',
 'login_username'            => 'Username',
 'login_password'            => 'Password',
