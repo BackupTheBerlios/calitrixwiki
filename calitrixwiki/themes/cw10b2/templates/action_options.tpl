@@ -27,9 +27,9 @@
 <span class="light-grey">{$lang.options_rename_desc}</span><br /><br />
 
 <select name="new_space">
-{section name="idx" loop="$nSpaces"}
-<option value="{$nSpaces[idx]}"{if $nSpaces[idx] == $pageNamespace} selected="selected"{/if}>{$nSpaces[idx]}</option>
-{/section}
+{foreach from="$nSpaces" key="nSpaceId" item="nSpace"}
+<option value="{$nSpace}"{if $nSpace == $pageNamespace} selected="selected"{/if}>{$nSpace}</option>
+{/foreach}
 </select>:
 <input type="text" name="new_name" size="40" value="{$pageNameOnly}" /><br /><br />
 
