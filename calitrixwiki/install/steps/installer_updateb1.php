@@ -77,6 +77,7 @@ class installer_updateb1 extends installer
 			return false;
 		}
 		
+		$this->lockInstaller();
 		$tpl->assign('updated', true);
 	}
 	
