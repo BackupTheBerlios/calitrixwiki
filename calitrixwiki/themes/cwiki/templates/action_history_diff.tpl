@@ -8,18 +8,18 @@
  {section name="idx" loop="$diff_final"}
  <tr>
   <td class="td-first">
-   <span style="font-family:monospace">{$diff_orig[idx]}</span>
+   <span style="font-family:monospace">{$diff_orig[idx]}&nbsp;</span>
   </td>
   <td class="td-last">
   <span style="font-family:monospace">
   {if $diff_final[idx].type == 'edit'}
-  <span style="color:orange">{$diff_final[idx].line}</span>
+  <span style="color:orange">{$diff_final[idx].line}&nbsp;</span>
   {elseif $diff_final[idx].type == 'add'}
-  <span style="color:green">{$diff_final[idx].line}</span>
+  <span style="color:green">{$diff_final[idx].line}&nbsp;</span>
   {elseif $diff_final[idx].type == 'subs'}
-  <span style="color:red">{$diff_final[idx].line}</span>
+  <span style="color:red">{$diff_final[idx].line}&nbsp;</span>
   {else}
-  {$diff_final[idx].line}
+  {$diff_final[idx].line}&nbsp;
   {/if}
   </span>
   </td>

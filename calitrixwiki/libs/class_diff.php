@@ -125,38 +125,26 @@ class diff
 		$lines   = explode("\n", $text);
 		$patched = '';
 		
-		end($diff);
-		$lineCount = key($diff);
-		$lineCount = $lineCount < count($lines) ? count($lines) : $lineCount;
-		
-		for($i = 0; $i <= $lineCount; $i++)
+		foreach($diff as $line => $op)
 		{
-			if(isset($diff[$i])) {
-				$op = $diff[$i];
-				
-				if($op[0] == '~') {
-					$patched .= $op[1]."\n";
-				} elseif($op[0] == '+') {
-					$patched .= $op[1]."\n";
+			if($op[0] == '+') {
+				if(isset($lines[$line])) {
+					$start = array_slice($lines, 0, $line);
+					$end   = array_slice($lines, $line, count($lines));
+					$start[] = $op[1];
 					
-					if(isset($lines[$i])) {
-						$patched .= $lines[$i]."\n";
-					}
-				} elseif($op[0] == '-') {
-					/**
-					 * Removing a line, no addition to $patched
-					 * This elseif is just a dummy and you
-					 * may remove it if you want.
-					 **/
+					$lines = array_merge($start, $end);
+				} else {
+					$lines[] = $op[1];
 				}
-			} else {
-				if(isset($lines[$i])) {
-					$patched .= $lines[$i]."\n";
-				}
+			} elseif($op[0] == '~') {
+				$lines[$line] = $op[1];
+			} elseif($op[0] == '-') {
+				unset($lines[$line]);
 			}
 		}
 		
-		return $patched;
+		return join("\n", $lines);
 	}
 	
 	/**
