@@ -26,8 +26,8 @@
  {if $loggedIn}
  <h1>{$user.user_name}</h1>
  <ul>
-  <li><a href="{wikiurl page="`$cfg.special_namespace`:Preferences"}">{$lang.wiki_user_prefs}</a></li>
-  <li><a href="{wikiurl page="`$cfg.special_namespace`:Logout"}">{$lang.wiki_logout}</a></li>
+  <li><a href="{wikiurl page="`$cfg.special_namespace`:Preferences"}" class="wiki-internal">{$lang.wiki_user_prefs}</a></li>
+  <li><a href="{wikiurl page="`$cfg.special_namespace`:Logout"}" class="wiki-internal">{$lang.wiki_logout}</a></li>
  </ul>
  {else}
  <h1>{$lang.wiki_login}</h1>
@@ -36,11 +36,11 @@
  <input type="text" size="15" name="username" maxlength="50" /><br />
  {$lang.login_password}<br />
  <input type="password" size="15" name="password" /><br />
- <input type="checkbox" name="remember" id="ql-c1"><label for="ql-c1"><small>{$lang.login_remember}</small></label><br />
- <input type="submit" value="{$lang.login_submit}">
+ <input type="checkbox" name="remember" id="ql-c1" /><label for="ql-c1"><small>{$lang.login_remember}</small></label><br />
+ <input type="submit" value="{$lang.login_submit}" />
  </form>
  <ul>
-  <li><a href="{wikiurl page="`$cfg.special_namespace`:Register"}">{$lang.wiki_register}</a></li>
+  <li><a href="{wikiurl page="`$cfg.special_namespace`:Register"}" class="wiki-internal">{$lang.wiki_register}</a></li>
  </ul>
  {/if}
 </div>

@@ -234,7 +234,7 @@ span.wiki-underline {
 }
 
 span.wiki-strike {
-	text-decoration:strike-through;
+	text-decoration:line-through;
 }
 
 tt {

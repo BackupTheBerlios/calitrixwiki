@@ -5,7 +5,7 @@
 {include file="form_errors.tpl"}
 
 <form method="post" action="{wikiurl page="`$cfg.special_namespace`:Preferences" op="details"}">
-<input type="hidden" name="change" value="email">
+<input type="hidden" name="change" value="email" />
 <fieldset><legend>{$lang.prefs_details_email}</legend>
 {$lang.prefs_details_email_desc}
 <hr />
@@ -16,7 +16,7 @@
 </form>
 
 <form method="post" action="{wikiurl page="`$cfg.special_namespace`:Preferences" op="details"}">
-<input type="hidden" name="change" value="password">
+<input type="hidden" name="change" value="password" />
 <fieldset><legend>{$lang.prefs_details_password}</legend>
 {$lang.prefs_details_password_desc}
 <hr />

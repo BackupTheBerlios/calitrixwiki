@@ -119,15 +119,16 @@ class parser
 		$text = preg_replace('/^(={2,4})(.+?)(\1)($|\n\r|\n|\r)/me',
 		                     '$this->createHeading(\'\1\', \'\2\')',
 		                     $text);  // Headings
-		$text = preg_replace('/^----+/m',               '<hr />',                              $text);  // Horizontal ruler
-		$text = preg_replace('/^-&gt;&lt;-(.+?)$/m',    '<div class="wiki-centered">\1</div>', $text);  // Centered text
-		$text = preg_replace('/^-&gt;(.+?)$/m',         '<div class="wiki-right">\1</div>',    $text);  // Right-aligned text
-		$text = preg_replace('/^&lt;-(.+?)$/m',         '<div class="wiki-left">\1</div>',     $text);  // Left-aligned text
-		$text = preg_replace('/\'\'\'(.+?)\'\'\'/s',    '<strong>\1</strong>',                 $text);  // Strong emphasis
-		$text = preg_replace('/\'\'(.+?)\'\'/s',        '<em>\1</em>',                         $text);  // Emphasized text
-		$text = preg_replace('/@@(.+?)@@/s',            '<tt>\1</tt>',                         $text);  // Monospace text
-		$text = preg_replace('/^([:]+)(.+?)$/me',       '$this->indentText(\'\1\', \'\2\')',   $text);  // Indented text
-		$text = preg_replace('/\[\$([A-Za-z0-9]+)\]/e', '$this->replaceUserVar(\'\1\')',       $text);  // Replace user vars in the text
+		$text = preg_replace('/^----+/m',                    '<hr />',                              $text);  // Horizontal ruler
+		$text = preg_replace('/^-&gt;&lt;-(.+?)$/m',         '<div class="wiki-centered">\1</div>', $text);  // Centered text
+		$text = preg_replace('/^-&gt;(.+?)$/m',              '<div class="wiki-right">\1</div>',    $text);  // Right-aligned text
+		$text = preg_replace('/^&lt;-(.+?)$/m',              '<div class="wiki-left">\1</div>',     $text);  // Left-aligned text
+		$text = preg_replace('/\'\'\'\'\'(.+?)\'\'\'\'\'/s', '<strong><em>\1</em></strong>',        $text);  // Double emphasis
+		$text = preg_replace('/\'\'\'(.+?)\'\'\'/s',         '<strong>\1</strong>',                 $text);  // Strong emphasis
+		$text = preg_replace('/\'\'(.+?)\'\'/s',             '<em>\1</em>',                         $text);  // Emphasized text
+		$text = preg_replace('/@@(.+?)@@/s',                 '<tt>\1</tt>',                         $text);  // Monospace text
+		$text = preg_replace('/^([:]+)(.+?)$/me',            '$this->indentText(\'\1\', \'\2\')',   $text);  // Indented text
+		$text = preg_replace('/\[\$([A-Za-z0-9]+)\]/e',      '$this->replaceUserVar(\'\1\')',       $text);  // Replace user vars in the text
 		
 		// Before we start with links we must parse image tags.
 		$text = preg_replace('/\[\[(([a-z]+)\:\/\/[a-zA-Z0-9\-\.]+([\S]*)(\.(gif|jpg|jpeg|png|bmp|tiff)))'.
@@ -733,40 +734,51 @@ class parser
 		$prevDepth = 0;
 		$listCode  = '';
 		$tagsClose = array();
+		$closeLi   = true;
 		
-		foreach($items as $item)
+		for($i = 0; $i < count($items); $i++)
 		{
+			$item = $items[$i];
 			preg_match('/(^(\*|#)+)/', $item, $match);
 			$itemType    = $match[0][strlen($match[0]) - 1];
 			$itemCleaned = substr($item, strlen($match[0]), strlen($item));
 			$itemDepth   = strlen($match[0]);
 			
 			if($itemDepth > $prevDepth) {
-				for($i = $prevDepth; $i < $itemDepth; $i++)
+				for($j = $prevDepth; $j < $itemDepth; $j++)
 				{
-					if($item[$i] == '*') {
-						$tagsClose[]  = '</ul>';
-						$listCode   .= '<ul>';
-					} elseif($item[$i] == '#') {
-						$tagsClose[]  = '</ol>';
-						$listCode   .= '<ol style="list-style-type:decimal">';
+					if(strlen($listCode) > 5) {
+						$listCode = substr($listCode, 0, strlen($listCode) - 6);
+					}
+					
+					if($item[$j] == '*') {
+						$tagsClose[]  = '</ul></li>';
+						$listCode   .= '<ul><li>';
+					} elseif($item[$j] == '#') {
+						$tagsClose[]  = '</ol></li>';
+						$listCode   .= '<ol style="list-style-type:decimal"><li>';
 					}
 				}
 			} elseif($itemDepth < $prevDepth) {
 				$tagsClose = array_values($tagsClose);
 				
-				for($i = $prevDepth - 1; $i >= $itemDepth; $i--)
+				for($j = $prevDepth - 1; $j >= $itemDepth; $j--)
 				{
-					if(!isset($tagsClose[$i])) {
-						$this->outputArray($tagsClose);
-					}
-					$listCode .= $tagsClose[$i];
-					unset($tagsClose[$i]);
+					$listCode .= $tagsClose[$j];
+					unset($tagsClose[$j]);
 				}
+				
+				if($itemDepth == 0) {
+					$closeLi   = false;
+				}
+				$listCode .= '<li>';
+			} else {
+				$listCode .= '<li>';
 			}
 			
-			$listCode .= '<li> '.trim($itemCleaned).' </li>'."\n";
+			$listCode .= trim($itemCleaned).($closeLi ? '</li>' : '')."\n";
 			$prevDepth = $itemDepth;
+			$closeLi   = true;
 		}
 		
 		$tagsClose = array_values($tagsClose);
@@ -776,6 +788,8 @@ class parser
 			$listCode .= $tagsClose[$i];
 			unset($tagsClose[$i]);
 		}
+		
+		$listCode = substr($listCode, 0, strlen($listCode) - 5);
 		
 		return $listCode;
 	}

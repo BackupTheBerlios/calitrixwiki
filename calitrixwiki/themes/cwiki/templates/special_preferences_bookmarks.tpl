@@ -5,19 +5,19 @@
 {include file="form_errors.tpl"}
 
 <form method="post" action="{wikiurl page="`$cfg.special_namespace`:Preferences" op="bookmarks"}">
-<input type="hidden" name="so" value="add">
+<input type="hidden" name="so" value="add" />
 <fieldset><legend>{$lang.prefs_bookmarks_add}</legend>
 {$lang.prefs_bookmarks_add_desc}
 <hr />
 {$lang.prefs_bookmarks_add_page}<br />
 <input type="text" name="page_name" size="30" maxlength="70" />
-&nbsp;<input type="submit" value="{$lang.prefs_bookmarks_add_submit}">
+&nbsp;<input type="submit" value="{$lang.prefs_bookmarks_add_submit}" />
 </fieldset>
 </form>
 
 {include file="page_links.tpl"}
 <form name="bookmarks" method="post" action="{wikiurl page="`$cfg.special_namespace`:Preferences" op="bookmarks"}">
-<input type="hidden" name="so" value="change">
+<input type="hidden" name="so" value="change" />
 <table cellspacing="0" cellpadding="0" border="0" width="100%">
  <tr>
   <td class="td-head">{$lang.prefs_bookmarks_page}</td>
@@ -28,8 +28,8 @@
  {section name="idx" loop="$bookmarks"}
  <tr>
   <td class="td-first">
-   {if $bookmarks[idx].mark_new}<img src="{$urlRoot}/themes/cwiki/images/new.gif" alt="" />&nbsp;&nbsp;<a href="{wikiurl page="`$bookmarks[idx].page_name`"}">{$bookmarks[idx].page_name}</a>
-   {else}<a href="{wikiurl page="`$bookmarks[idx].page_name`"}">{$bookmarks[idx].page_name}{/if}</td>
+   {if $bookmarks[idx].mark_new}<img src="{$urlRoot}/themes/cwiki/images/new.gif" alt="" />&nbsp;&nbsp;{/if}
+   <a href="{wikiurl page="`$bookmarks[idx].page_name`"}" class="wiki-internal">{$bookmarks[idx].page_name}</a></td>
   <td class="td-cell">{$bookmarks[idx].page_version}</td>
   <td class="td-cell">{$bookmarks[idx].page_last_change}</td>
   <td class="td-last"><input type="checkbox" name="pid[]" value="{$bookmarks[idx].page_id}" />
@@ -49,7 +49,7 @@
 <option value="del" selected="selected">{$lang.wiki_delete}</option>
 <option value="delmark">{$lang.prefs_bookmarks_del_mark}</option>
 </select>
-&nbsp;<input type="submit" value="{$lang.prefs_bookmarks_change_submit}">
+&nbsp;<input type="submit" value="{$lang.prefs_bookmarks_change_submit}" />
 </div>
 </form>
 

@@ -5,7 +5,7 @@
 {include file="form_errors.tpl"}
 
 <form method="post" action="{wikiurl page="`$cfg.special_namespace`:Preferences" op="prefs"}">
-<input type="hidden" name="change" value="interface">
+<input type="hidden" name="change" value="interface" />
 <fieldset><legend>{$lang.prefs_prefs_interface}</legend>
 {$lang.prefs_prefs_interface_desc}
 <hr />
@@ -43,27 +43,27 @@
 
 <hr />
 
-<input type="submit" value="{$lang.prefs_prefs_submit}">
+<input type="submit" value="{$lang.prefs_prefs_submit}" />
 </fieldset>
 </form>
 
 <form method="post" action="{wikiurl page="`$cfg.special_namespace`:Preferences" op="prefs"}">
-<input type="hidden" name="change" value="mailing">
+<input type="hidden" name="change" value="mailing" />
 <fieldset><legend>{$lang.prefs_prefs_mailing}</legend>
 {$lang.prefs_prefs_mailing_desc}
 <hr />
 <input type="checkbox" name="enable_subs" id="prefs1"{if $subsChecked} checked="checked"{/if} /><label for="prefs1">{$lang.prefs_prefs_enable_subs}</label><br />
 <input type="checkbox" name="receive_news" id="prefs2"{if $user.user_enable_mails == 1}checked="checked"{/if} /><label for="prefs2">{$lang.prefs_prefs_receive_news}</label><br /><br />
-<input type="submit" value="{$lang.prefs_prefs_submit}">
+<input type="submit" value="{$lang.prefs_prefs_submit}" />
 </fieldset>
 </form>
 
 <form method="post" action="{wikiurl page="`$cfg.special_namespace`:Preferences" op="prefs"}">
-<input type="hidden" name="change" value="misc">
+<input type="hidden" name="change" value="misc" />
 <fieldset><legend>{$lang.prefs_prefs_misc}</legend>
 <input type="checkbox" name="use_cookies" id="prefs3"{if $user.user_use_cookies == 1} checked="checked"{/if} /><label for="prefs3">{$lang.prefs_prefs_use_cookies}</label><br />
 <input type="checkbox" name="dblclick_editing" id="prefs4"{if $user.user_dblclick_editing == 1} checked="checked"{/if} /><label for="prefs4">{$lang.prefs_prefs_dblclick_editing}</label><br /><br />
-<input type="submit" value="{$lang.prefs_prefs_submit}">
+<input type="submit" value="{$lang.prefs_prefs_submit}" />
 </fieldset>
 </form>
 
