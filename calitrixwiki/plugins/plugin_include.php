@@ -45,10 +45,11 @@ class plugin_include
 	 * @author Johannes Klose <exe@calitrix.de>
 	 * @since 1.0 Beta 1 31.05.04 14:51
 	 * @param array  &$params Plugin parameters
+	 * @param string $text    Text between plugin tags
 	 * @param object &$core   Core class object
 	 * @return void
 	 **/
-	function plugin_include(&$params)
+	function plugin_include(&$params, $text)
 	{
 		global $wikipageIncludes, $wiki;
 		

@@ -157,6 +157,7 @@ class installer_config extends installer
 		$cfg['plugins_dir']      = $docRoot.'/plugins';
 		$cfg['special_dir']      = $docRoot.'/specialpages';
 		$cfg['themes_dir']       = $docRoot.'/themes';
+		$cfg['install_time']     = $this->time;
 		
 		$file  = "<?PHP\n";
 		$file .= '$cfg = ';

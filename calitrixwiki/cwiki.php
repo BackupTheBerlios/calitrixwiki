@@ -38,7 +38,7 @@ error_reporting(E_ALL);
  **/
 define('CWIKI_STDCONFIG', 'settings/stdconfig.php');
 define('CWIKI_DBCONFIG',  'settings/dbconfig.php');
-define('CWIKI_VERSION',    '1.0 Beta 1');
+define('CWIKI_VERSION',    '1.0 Beta 2');
 define('PERM_VIEW',        1);    // Permission to view pages.
 define('PERM_EDIT',        2);    // Permission to edit pages.
 define('PERM_HISTORY',     4);    // Permission to view the history.

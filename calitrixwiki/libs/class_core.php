@@ -456,7 +456,7 @@ class core
 	{
 		$tpl    = &singleton('template');
 		
-		$versions = $this->getVersions();
+		$versions = diff::getVersions();
 		
 		if(!isset($versions[$version])) {
 			return false;
@@ -558,9 +558,14 @@ class core
 			}
 			
 			$row = $db->fetch($result);
-			$localMask = (int)$row['perm_access_mask'];
 			
-			if($localMask > 0 && !$this->hasPerms(PERM_IGNORELOCAL)) {
+			if($row['perm_access_mask'] == null) {
+				$localMask = -1;
+			} else {
+				$localMask = (int)$row['perm_access_mask'];
+			}
+			
+			if($localMask >= 0 && !$this->hasPerms(PERM_IGNORELOCAL)) {
 				$this->accessMask = $this->mergePerms($this->accessMask, $localMask);
 			}
 			

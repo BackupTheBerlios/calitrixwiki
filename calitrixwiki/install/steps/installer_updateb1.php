@@ -66,6 +66,7 @@ class installer_updateb1 extends installer
 		
 		mysql_query('CREATE TABLE '.DB_PREFIX.'config(config_section VARCHAR(30) NOT NULL, config_item '.
 		'VARCHAR(100) NOT NULL, config_value TEXT NOT NULL, PRIMARY KEY (config_section, config_item))');
+		mysql_query('UPDATE '.DB_PREFIX.'users SET user_access_mask = -1 WHERE user_access_mask = 0');
 		
 		$cfg = $this->createConfigTable($setFile);
 		$cfg = $this->createConfigFile($cfg, $setFile);
@@ -90,23 +91,49 @@ class installer_updateb1 extends installer
 	{
 		include $setFile;
 		
-		$cfg['default_theme']        = 'cw';
-		$cfg['space_wiki_words']     = 0;
-		$cfg['auto_link']            = 1;
-		$cfg['display_namespaces']   = 1;
-		$cfg['link_num']             = 0;
-		$cfg['link_self']            = 1;
-		$cfg['enable_url_rewriting'] = 0;
-		$cfg['rewrite_rule_match']   = '^([^?./]+)$';
-		$cfg['rewrite_rule_replace'] = 'cwiki.php?page=$1&%{QUERY_STRING}';
-		$cfg['wiki_version']         = '1.0 Beta 2';
-		$cfg['install_time']         = $this->time;
-		$cfg['themes']['cw']         = 'CalitrixWiki 1.0 Beta 2';
+		$cfg['space_wiki_words']                  = 0;
+		$cfg['auto_link']                         = 1;
+		$cfg['display_namespaces']                = 1;
+		$cfg['link_num']                          = 0;
+		$cfg['link_self']                         = 1;
+		$cfg['enable_url_rewriting']              = 0;
+		$cfg['rewrite_rule_match']                = '^([^?./]+)$';
+		$cfg['rewrite_rule_replace']              = 'cwiki.php?page=$1&%{QUERY_STRING}';
+		$cfg['wiki_version']                      = '1.0 Beta 2';
+		$cfg['install_time']                      = $this->time;
+		$cfg['default_theme']                     = 'cw10b2';
+		$cfg['themes']['cw']                      = 'CalitrixWiki 1.0 Beta 2';
+		$cfg['actions']['options']                = 'options';
+		$cfg['actions']['print']                  = 'view';
+		$cfg['code_snippets']['link_email']       = '<a href="%1$s" class="wiki-email">%2$s</a>';
+		$cfg['code_snippets']['link_external']    = '<a href="%1$s" class="wiki-external">%2$s</a>';
+		$cfg['code_snippets']['trail']            = '<table cellpadding="0" cellpadding="0" border="0" style="background:#f1f1f1;border:1px #cdcdcd solid;"><tr><td width="33%%">%s&laquo;</td><td width="34%%" align="center"><a href="%s">%s</a></td><td width="33%%" align="right">&raquo;%s</td></tr></table>';
+		$cfg['code_snippets']['trail_emptyleft']   = '';
+		$cfg['code_snippets']['trail_emptyright']  = '';
+		$cfg['code_snippets']['trail_linkleft']    = '<a href="%s">%s</a>';
+		$cfg['code_snippets']['trail_linkright']   = '<a href="%s">%s</a>';
+		$cfg['style_attributes']['clear']          = '/^(left|right|both|none)$/';
+		$cfg['style_attributes']['vertical-align'] = '/^(top|middle|bottom)$/';
+		$cfg['indent_width']                       = 30;
+		$cfg['teaser_length']                      = 400;
+		$cfg['match_email']                        = '/^[_\.0-9a-z-]+@([0-9a-z][0-9a-z-]+\.)+[a-z]+$/i';
+		$cfg['wiki_styles']['highlight']           = array('background-color' => '#ffd800', 'color' => '#6e0000');
+		$cfg['wiki_styles']['strike']              = array('text-decoration' => 'line-through');
+		$cfg['wiki_styles']['underline']           = array('text-decoration' => 'underline');
+		$cfg['wiki_styles']['small']               = array('font-size' => '0.8em');
+		$cfg['inter_wiki']['UseMod']               = 'http://www.usemod.com/cgi-bin/wiki.pl?%s';
+		$cfg['inter_wiki']['Calitrix']             = 'http://www.calitrix.de/%s';
+		$cfg['inter_wiki']['C2']                   = 'http://c2.com/cgi/wiki?%s';
 		
 		unset($cfg['html_newline']);
 		unset($cfg['html_paragraph']);
 		unset($cfg['enable_caching']);
 		unset($cfg['sitemap_chars']);
+		unset($cfg['actions']['perms']);
+		unset($cfg['html_paragraph']);
+		unset($cfg['html_newline']);
+		unset($cfg['sitemap_chars']);
+		unset($cfg['enable_caching']);
 		
 		$nCfg = array();
 		

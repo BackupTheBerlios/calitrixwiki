@@ -3,25 +3,20 @@
  <head>
   <title>{$pageTitle}</title>
   
-  <link rel="stylesheet" href="{$installUrl}/html/style.css" />
   <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+  
+  <link rel="stylesheet" id="cssbase" href="{$installUrl}/html/style.css" />
   
 </head>
 
 <body>
 
 <div id="wrapper">
- <div id="inner-wrapper">
-  <div id="header">
-   <img src="{$installUrl}/html/images/logo.gif" id="logo" />
-  </div>
-  <div id="menu">
-   <img src="{$installUrl}/html/images/nav_top.gif" alt="" />
-   <div style="padding-left:5px">
-    <ul>
-     <li>blahlah</li>
-    </ul>
-   </div>
-  </div>
-  <div id="content">
-   <h1 class="page-title">{$stepTitle}</h1>
+ <div id="header">
+  <img src="{$installUrl}/html/images/logo.gif" id="logo" />
+ </div>
+ <div id="menu">
+  foo
+ </div>
+ <div id="content">
+    <h1 class="page-title">{$pageTitle}</h1>

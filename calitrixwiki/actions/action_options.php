@@ -197,7 +197,7 @@ class action_options extends core
 		$accessMask = (int)$this->permGroups[$groupId]['perm_access_mask'];
 		
 		// Use default access mask of the group if there is no local access mask yet
-		if($accessMask == 0) {
+		if($accessMask == null) {
 			$accessMask = (int)$this->permGroups[$groupId]['group_access_mask'];
 		}
 		

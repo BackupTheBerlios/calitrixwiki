@@ -33,6 +33,7 @@ class installer_install extends installer
 		
 		$tpl->assign('dbCreateChecked',     false);
 		$tpl->assign('defaultPagesChecked', false);
+		$tpl->assign('isError',             false);
 		
 		$defaultPages = isset($this->get['idf']) ? (bool)$this->get['idf'] : false;
 		$tpl->assign('defaultPages', $defaultPages);

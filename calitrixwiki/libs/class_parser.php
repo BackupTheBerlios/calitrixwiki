@@ -140,7 +140,7 @@ class parser
 		$text = preg_replace('/@@(.+?)@@/s',                          '<tt>\1</tt>',                         $text);  // Monospace text
 		$text = preg_replace('/^([:]+)(.+?)$/me',                     '$this->indentText(\'\1\', \'\2\')',   $text);  // Indented text
 		$text = preg_replace('/\[\$([A-Za-z0-9]+)\]/e',               '$this->replaceUserVar(\'\1\')',       $text);  // Replace user vars in the text
-		$text = preg_replace('/(?<=\s)([A-Za-z.-]+)\((.*?)\)(?=\s)/', '<acronym title="\2">\1</acronym>',    $text);  // Acronyms
+		$text = preg_replace('/(?<=\s)([A-Za-z.-]+)\((.*?)\)/', '<acronym title="\2">\1</acronym>',    $text);  // Acronyms
 		
 		// Before we start with links we must parse image tags.
 		$text = preg_replace('/\[\[(([a-z]+)\:\/\/[a-zA-Z0-9\-\.]+([\S]*?)(\.(gif|jpg|jpeg|png|bmp|tiff)))'.
@@ -149,23 +149,23 @@ class parser
 		                     $text); // Parse images
 		
 		// Hyperlinking this page with others wouldn't be such a bad idea. Lets start with external links.
-		$text = preg_replace('/(?<=\s|^)(([a-z]+)\:\/\/[a-zA-Z0-9\-\.]+([\S]*))/',
-		                     '<a href="\1" class="wiki-external">\1</a>',
+		$text = preg_replace('/(?<=\s|^)(([a-z]+)\:\/\/[a-zA-Z0-9\-\.]+([\S]*))/e',
+		                     'stripslashes(sprintf($wiki->cfg[\'code_snippets\'][\'link_external\'], \'\1\', \'\1\'))',
 		                     $text); // Parse urls
-		$text = preg_replace('/\[\[(([a-z]+)\:\/\/[a-zA-Z0-9\-\.]+([\S]*))\]\]/',
-		                     '<a href="\1" class="wiki-external">\1</a>',
+		$text = preg_replace('/\[\[(([a-z]+)\:\/\/[a-zA-Z0-9\-\.]+([\S]*))\]\]/e',
+		                     'stripslashes(sprintf($wiki->cfg[\'code_snippets\'][\'link_external\'], \'\1\', \'\1\'))',
 		                     $text); // Parse urls
-		$text = preg_replace('/\[\[(([a-z]+)\:\/\/[a-zA-Z0-9\-\.]+([\S]*)) (.+?)\]\]/',
-		                     '<a href="\1" class="wiki-external">\4</a>',
+		$text = preg_replace('/\[\[(([a-z]+)\:\/\/[a-zA-Z0-9\-\.]+([\S]*)) (.+?)\]\]/e',
+		                     'stripslashes(sprintf($wiki->cfg[\'code_snippets\'][\'link_external\'], \'\1\', \'\4\'))',
 		                     $text); // Parse urls
-		$text = preg_replace('/(?<=\s|^)([a-zA-Z0-9._\-]+@[a-zA-Z0-9\.\-]+)(?=\s|$)/',
-		                     '<a href="mailto:\1" class="wiki-external">\1</a>',
+		$text = preg_replace('/(?<=\s|^)([a-zA-Z0-9._\-]+@[a-zA-Z0-9\.\-]+)(?=\s|$)/e',
+		                     'stripslashes(sprintf($wiki->cfg[\'code_snippets\'][\'link_email\'], \'\1\', \'\1\'))',
 		                     $text); // Parse emails
-		$text = preg_replace('/\[\[([a-zA-Z0?9._\-]+@[a-zA-Z0?9\.\-]+)\]\]/',
-		                     '<a href="mailto:\1" class="wiki-external">\1</a>',
+		$text = preg_replace('/\[\[([a-zA-Z0?9._\-]+@[a-zA-Z0?9\.\-]+)\]\]/e',
+		                     'stripslashes(sprintf($wiki->cfg[\'code_snippets\'][\'link_email\'], \'\1\', \'\1\'))',
 		                    $text); // Parse emails
-		$text = preg_replace('/\[\[([a-zA-Z0?9._\-]+@[a-zA-Z0?9\.\-]+) (.+?)\]\]/',
-		                     '<a href="mailto:\1" class="wiki-external">\2</a>',
+		$text = preg_replace('/\[\[([a-zA-Z0?9._\-]+@[a-zA-Z0?9\.\-]+) (.+?)\]\]/e',
+		                     'stripslashes(sprintf($wiki->cfg[\'code_snippets\'][\'link_email\'], \'\1\', \'\2\'))',
 		                     $text); // Parse emails
 		
 		// Very well. Now we are going to check which internal links target pages
@@ -217,9 +217,17 @@ class parser
 		
 		// All markups are done. Now we can safely insert plugins which may insert
 		// own formatings.
-		$text = preg_replace('/\{([A-Za-z0-9_]+)( ([A-Za-z0-9_]+=&quot;(.*?)&quot; ?)*)\}/e',
-		                     '$this->parseWikiPlugin(\'\1\', \'\2\')',
-		                     $text);
+		if(preg_match_all('/\{([A-Za-z0-9_]+)( (?:[A-Za-z0-9_]+=&quot;(?:.*?)&quot; ?)*)?\}(?:(.*?)\{\/\1\})?/e', $text, $matches) > 0) {
+			$pluginCalls = $this->parseWikiPlugins($matches);
+			
+			foreach($pluginCalls as $pluginInfo)
+			{
+				foreach($pluginInfo[2] as $pluginTag)
+				{
+					$text = str_replace($pluginTag, $pluginInfo[3], $text);
+				}
+			}
+		}
 		
 		// Bring ignored sections back into the text
 		foreach($this->preformatedTexts as $rand => $string)
@@ -311,7 +319,7 @@ class parser
 		mt_srand((double)microtime()*1000000);
 		$rand = mt_rand(10000, 99999);
 		
-		$this->preformatedTexts["$rand"] = $text;
+		$this->preformatedTexts["$rand"] = stripslashes($text);
 		
 		return '<PRE'.$rand.'>';
 	}
@@ -328,7 +336,7 @@ class parser
 		mt_srand((double)microtime()*1000000);
 		$rand = mt_rand(10000, 99999);
 		
-		$this->noParseSections["$rand"] = $text;
+		$this->noParseSections["$rand"] = stripslashes($text);
 		
 		return '<NOPARSE'.$rand.'>';
 	}
@@ -447,8 +455,8 @@ class parser
 		global $wiki;
 		
 		$depth  = strlen($depth) - 1;
-		$anchor = preg_replace('/[^\w\s]/', '', $text);
-		$this->headings[] = array($depth, $text);
+		$anchor = preg_replace('/[^\w\s\xc0-\xff]/', '', html_entity_decode($text));
+		$this->headings[] = array($depth, $text, htmlentities($anchor));
 		
 		return sprintf($wiki->cfg['code_snippets']['heading'],
 		               preg_replace('/\s/', '_', $anchor), $depth, $text);
@@ -470,7 +478,7 @@ class parser
 		
 		foreach($headings as $heading)
 		{
-			$toc .= str_repeat('#', $heading[0]).' <a href="#'.preg_replace('/\s/', '_', $heading[1]).'">'.$heading[1].'</a>'."\n";
+			$toc .= str_repeat('#', $heading[0]).' <a href="#'.preg_replace('/\s/', '_', $heading[2]).'">'.$heading[1].'</a>'."\n";
 			
 			$hNum++;
 		}
@@ -1077,32 +1085,53 @@ class parser
 	}
 	
 	/**
-	 * This function parses and loads a WikiPlugin.
+	 * This function parses the attribute strings 
+	 * and loads the plugins.
 	 *
 	 * @author Johannes Klose <exe@calitrix.de>
 	 * @param  string $pluginName Plugin name
-	 * @param  string $params     Plugin parameters
 	 * @return string             Plugin return value
 	 **/
-	function parseWikiPlugin($pluginName, $params)
+	function parseWikiPlugins($plugins)
 	{
 		$tpl = &singleton('template');
 		
-		$pluginParams['name'] = $pluginName;
-		$pluginParams['text'] = true;
+		$pluginCalls = array();
 		
-		$params = trim($params);
-		
-		if($params != '') {
-			preg_match_all('/([A-Za-z0-9_]+)=&quot;(.*?)&quot;/', $params, $matches);
+		for($i = 0; $i < count($plugins[0]); $i++) {
+			$name    = $plugins[1][$i];
+			$params  = $plugins[2][$i];
+			$text    = $plugins[3][$i];
+			$pString = '';
 			
-			for($i = 0; $i < count($matches[1]); $i++)
-			{
-				$pluginParams[$matches[1][$i]] = $matches[2][$i];
+			if($params != '') {
+				preg_match_all('/([A-Za-z0-9_]+)=&quot;(.*?)&quot;/', $params, $matches);
+				
+				for($j = 0; $j < count($matches[1]); $j++)
+				{
+					$pArray[$matches[1][$j]] = $matches[2][$j];
+				}
 			}
+			
+			$pArray['name'] = $name;
+			$pArray['text'] = true;
+			
+			ksort($pArray);
+			
+			foreach($pArray as $key => $val) {
+				$pString .= $key.'="'.$val.'" ';
+			}
+			
+			$pluginId = md5($name.' '.trim($pString));
+			
+			if(!isset($pluginCalls[$pluginId])) {
+				$pluginCalls[$pluginId] = array($name, $pArray, array(), $tpl->wikiPlugin($pArray, $text));
+			}
+			
+			$pluginCalls[$pluginId][2][] = $plugins[0][$i];
 		}
 		
-		return $tpl->wikiPlugin($pluginParams);
+		return $pluginCalls;
 	}
 	
 	/**
@@ -1247,7 +1276,7 @@ class parser
 	 **/
 	function spaceWikiWord($word)
 	{
-		return preg_replace('/([A-Z][a-z0-9_]+)/', '\1 ', $word);
+		return trim(preg_replace('/([A-Z][a-z0-9_]+)/', '\1 ', $word));
 	}
 	
 	/**

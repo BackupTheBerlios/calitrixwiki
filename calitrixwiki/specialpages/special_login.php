@@ -38,19 +38,22 @@ class special_login extends core
 		$db   = &singleton('database');
 		$tpl  = &singleton('template');
 		
+		$tpl->assign('isMessage', false);
+		
 		if($this->loggedIn) {
-			$tpl->assign('loginMsg', $this->lang['login_already_logged_in']);
+			$tpl->assign('isMessage', true);
+			$tpl->assign('message',   $this->lang['login_already_logged_in']);
 			return;
 		}
-		
-		$tpl->assign('loginMsg', '');
 		
 		if($this->request == 'POST') {
 			$username = isset($this->post['username']) ? trim($this->post['username']) : '';
 			$password = isset($this->post['password']) ? trim($this->post['password']) : '';
 			
 			if($username == '' || $password == '') {
-				$tpl->assign('loginMsg', $this->lang['login_invalid']);
+				$tpl->assign('isMessage', true);
+				$tpl->assign('message',   $this->lang['login_invalid']);
+				return;
 			}
 			
 			$result = $db->query('SELECT user_id, user_name, user_password, user_use_cookies FROM '.DB_PREFIX.'users u '.
@@ -75,9 +78,11 @@ class special_login extends core
 				
 				$this->loggedIn = true;
 				$this->setUserConfig();
-				$tpl->assign('loginMsg', $this->lang['login_success']);
+				$tpl->assign('isMessage', true);
+				$tpl->assign('message',   $this->lang['login_success']);
 			} else {
-				$tpl->assign('loginMsg', $this->lang['login_invalid']);
+				$tpl->assign('isMessage', true);
+				$tpl->assign('message',   $this->lang['login_invalid']);
 			}
 		}
 	}

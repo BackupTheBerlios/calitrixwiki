@@ -61,9 +61,11 @@ class template extends Smarty
 	 *
 	 * @author Johannes Klose <exe@calitrix.de>
 	 * @param array  $params Plugin parameters
+	 * @param 
+	 * @param string $text   Text between plugin tags
 	 * @return string        Plugin return value
 	 **/
-	function wikiPlugin($params)
+	function wikiPlugin($params, $text = '')
 	{
 		$wiki = &$GLOBALS['wiki'];
 		
@@ -77,7 +79,7 @@ class template extends Smarty
 			$pluginName = 'plugin_'.$params['name'];
 			
 			include_once $fileName;
-			$plugin    = new $pluginName($params);
+			$plugin    = new $pluginName($params, $text);
 			$returnVal = $plugin->getContent();
 			
 			return $returnVal;
