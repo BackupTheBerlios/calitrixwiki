@@ -32,12 +32,6 @@ $starttime = $starttime[1] + $starttime[0];
  **/
  
 error_reporting(E_ALL);
-set_error_handler('myHandler');
-
-function myHandler($errNo, $errStr)
-{
-	echo $errNo.': '.$errStr.'<br />';
-}
 
 include 'settings/stdconfig.php';
 include 'settings/dbconfig.php';
