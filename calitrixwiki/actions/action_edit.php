@@ -105,7 +105,7 @@ class action_edit extends core
 					                    $this->editUserId, $this->editUsername, $this->editSummary);
 					
 					$this->sendNotifications();
-					$this->HTTPRedirect($this->genUrl($this->getUniqueName($this->page)));
+					$this->HTTPRedirect($this->genUrl($this->getUniqueName($this->page), '', array(), false));
 				}
 			} else {
 				// unused yet
