@@ -137,6 +137,26 @@ class admin extends core
 	}
 	
 	/**
+	 * Returnes the total size of the database the wiki is installed into.
+	 *
+	 * @author Johannes Klose <exe@calitrix.de>
+	 * @return string Database size in human readable format.
+	 **/
+	function getDbSize()
+	{
+		$db     = &singleton('database');
+		$result = $db->query('SHOW TABLE STATUS FROM '.DB_NAME);
+		$size   = 0;
+		
+		while($row = $db->fetch($result))
+		{
+			$size += ($row['Data_length'] + $row['Index_length']);
+		}
+		
+		return $this->HRFileSize($size);
+	}
+	
+	/**
 	 * Changes a configuration item.
 	 *
 	 * @author Johannes Klose <exe@calitrix.de>

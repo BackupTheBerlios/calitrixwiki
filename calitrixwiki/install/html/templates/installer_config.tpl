@@ -4,6 +4,8 @@
 {$lang.config_desc}
 </p>
 
+{include file="form_errors.tpl"}
+
 <form method="post" action="{wikiurl step="config" lang="`$currentLang`"}">
 <fieldset>
 <legend>{$lang.config_paths}</legend>

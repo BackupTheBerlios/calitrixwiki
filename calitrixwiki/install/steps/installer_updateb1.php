@@ -99,6 +99,14 @@ class installer_updateb1 extends installer
 		$cfg['enable_url_rewriting'] = 0;
 		$cfg['rewrite_rule_match']   = '^([^?./]+)$';
 		$cfg['rewrite_rule_replace'] = 'cwiki.php?page=$1&%{QUERY_STRING}';
+		$cfg['wiki_version']         = '1.0 Beta 2';
+		$cfg['install_time']         = $this->time;
+		$cfg['themes']['cw']         = 'CalitrixWiki 1.0 Beta 2';
+		
+		unset($cfg['html_newline']);
+		unset($cfg['html_paragraph']);
+		unset($cfg['enable_caching']);
+		unset($cfg['sitemap_chars']);
 		
 		$nCfg = array();
 		

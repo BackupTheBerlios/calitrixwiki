@@ -37,28 +37,31 @@ class special_sitemap extends core
 		$db   = &singleton('database');
 		$tpl  = &singleton('template');
 		
-		$chars  = $this->cfg['sitemap_chars'];
 		$result = $db->query('SELECT page_namespace, page_name FROM '.DB_PREFIX.'pages '.
 		'ORDER BY page_name');
+		$pages  = array();
 		
 		while($row = $db->fetch($result))
 		{
 			$pageName = $row['page_name'];
-			$char     = $pageName[0];
+			$char     = strtoupper($pageName[0]);
 			
-			if(!isset($pages[$char])) {
-				$pages[$char] = array();
+			if(!ctype_alpha($char)) {
+				if(!isset($pages['#'])) {
+					$pages['#'] = array();
+				}
+				
+				$pages['#'][] = $this->getUniqueName($row);
+			} else {
+				if(!isset($pages[$char])) {
+					$pages[$char] = array();
+				}
+				
+				$pages[$char][] = $this->getUniqueName($row);
 			}
-			
-			if(isset($chars[$char])) {
-				$chars[$char] = 1;
-			}
-			
-			$pages[$char][] = $this->getUniqueName($row);
 		}
 		
 		$tpl->assign('sitemap', $pages);
-		$tpl->assign('chars',   $chars);
 	}
 	
 	/**

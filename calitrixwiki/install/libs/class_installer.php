@@ -96,6 +96,19 @@ class installer
 	}
 	
 	/**
+	 * Creates a lock file for the installer.
+	 *
+	 * @author Johannes Klose <exe@calitrix.de>
+	 * @return void
+	 **/
+	function lockInstaller()
+	{
+		$fp = fopen(CWIKI_INSTALL_DIR.'/install.lock', 'w');
+		fputs($fp, 'Remove this file to use the installer again.');
+		fclose($fp);
+	}
+	
+	/**
 	 * Displays the current template.
 	 *
 	 * @author Johannes Klose <exe@calitrix.de>

@@ -61,17 +61,11 @@ class special_search extends core
 		
 		while($row = $db->fetch($result))
 		{
-			if($sw == 'title') {
-				$row['page_text']  = $parser->stripCodes($row['page_text']);
-				$row['page_text']  = substr($row['page_text'], 0, $this->cfg['teaser_length']).'...';
-				$row['page_name']  = $this->getUniqueName($row);
-				$row['page_title'] = preg_replace('/('.preg_quote($query, '/').')/i', '<span class="highlight">\1</span>', $row['page_name']);
-			} else {
-				$row['page_text']  = $parser->stripCodes($row['page_text']);
-				$row['page_text']  = $this->summarizeText($row['page_text'], $query, '<span class="highlight">%s</span>', $this->cfg['teaser_length']);
-				$row['page_name']  = $this->getUniqueName($row);
-				$row['page_title'] = $row['page_name'];
-			}
+			$row['page_text']  = $parser->stripCodes($row['page_text']);
+			$row['page_text']  = substr($row['page_text'], 0, $this->cfg['teaser_length']).'...';
+			$row['page_name']  = $this->getUniqueName($row);
+			$row['page_title'] = $row['page_name'];
+			//$row['page_text']  = $this->summarizeText($row['page_text'], $query, '<span class="highlight">%s</span>', $this->cfg['teaser_length']);
 			
 			$pages[] = $row;
 		}
@@ -187,7 +181,7 @@ class special_search extends core
 	 * @param  int    $minGap        Minimum of characters as space between two extracts
 	 * @param  int    $minWordLength Minimum length of a search word (defaults to 3)
 	 * @return mixed                 Googlified text as string or boolean false on failure
-	 **/
+	 *
 	function summarizeText($text, $query, $highlight, $teaserLength = 400, $minGap = 5, $minWordLength = 3)
 	{
 		if(!is_array($query)) {
@@ -261,7 +255,7 @@ class special_search extends core
 		}
 		
 		return $result.' ...';
-	}
+	}*/
 	
 	/**
 	 * Returns the template name for this special page.

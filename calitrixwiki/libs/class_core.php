@@ -277,7 +277,7 @@ class core
 			$this->cfg['dblclick_editing'] = $this->user['user_dblclick_editing'];
 			
 			if($this->user['user_access_mask'] >= 0) {
-				$this->accessMask = (int)$this->user['group_access_mask'] | (int)$this->user['user_access_mask'];
+				$this->accessMask = (int)$this->user['user_access_mask'];
 			} else {
 				$this->accessMask = (int)$this->user['group_access_mask'];
 			}
@@ -492,6 +492,12 @@ class core
 			$hide_session = false;
 		}
 		
+		if($xhtmlCompat) {
+			$seperator = '&amp;';
+		} else {
+			$seperator = '&';
+		}
+		
 		if(count($params) > 0) {
 			$url     .= strpos($url, '?') !== false ? '&' : '?';
 			$nparams  = array();
@@ -501,20 +507,15 @@ class core
 				$nparams[] = $key.'='.$val;
 			}
 			
-			$url .= join('&', $nparams);
+			$url .= join($seperator, $nparams);
 		}
 		
 		if($this->loggedIn && $this->sid != '' && !$hide_session) {
 			if(strpos($url, '?') !== false) {
-				$url .= '&'.$this->sid;
+				$url .= $seperator.$this->sid;
 			} else {
 				$url .= '?'.$this->sid;
 			}
-		}
-		
-		if($xhtmlCompat) {
-			//$url = preg_replace('/&(?!((#[0-9]+)|(#[xX][0-9a-fA-F]+)|([a-zA-Z]+));)/', '&amp;', $url);
-			$url = htmlentities($url);
 		}
 		
 		return $url;
@@ -673,6 +674,7 @@ class core
 		$tpl->assign('pageNamespace', $this->page['page_namespace']);
 		$tpl->assign('pageAction',    $this->pageInfo['action']);
 		$tpl->assign('actionTitle',   $this->pageAction);
+		$tpl->assign('wikiVersion',   $this->cfg['wiki_version']);
 		
 		if($this->pageTitle == '') {
 			$tpl->assign('pageTitle', $this->getUniqueName($this->page));

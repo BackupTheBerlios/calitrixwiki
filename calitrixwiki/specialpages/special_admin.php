@@ -36,7 +36,20 @@ class special_admin extends admin
 	 **/
 	function start()
 	{
-		;
+		$tpl = &singleton('template');
+		$db  = &singleton('database');
+		
+		$row1 = $db->queryRow('SELECT COUNT(*) AS count FROM '.DB_PREFIX.'pages');
+		$row2 = $db->queryRow('SELECT COUNT(*) AS count FROM '.DB_PREFIX.'changelog');
+		
+		$daysInstalled = $this->time - $this->cfg['install_time'];
+		$daysInstalled = $daysInstalled / 60 / 60 / 24;
+		
+		$tpl->assign('pageCount',   $row1['count']);
+		$tpl->assign('pagesPerDay', round(($row1['count'] / $daysInstalled), 2));
+		$tpl->assign('editCount',   $row2['count']);
+		$tpl->assign('editsPerDay', round(($row2['count'] / $daysInstalled), 2));
+		$tpl->assign('dbSize',      $this->getDbSize());
 	}
 	
 	/**
