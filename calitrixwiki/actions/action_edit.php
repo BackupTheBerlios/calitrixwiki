@@ -161,7 +161,7 @@ class action_edit extends core
 		
 		$langs       = array();
 		$usersSent   = array();
-		$messageFrom = $this->cfg['mailer_from'].' <'.$this->cfg['mail_from'].'>';
+		$messageFrom = 'From: '.$this->cfg['mailer_from'].' <'.$this->cfg['mail_from'].'>';
 		$rcUrl       = $this->genUrl($this->cfg['special_namespace'].':RecentChanges', '', array(), false);
 		$hpUrl       = $this->genUrl($this->cfg['default_page'], '', array(), false);
 		$dnUrl       = $this->genUrl($this->cfg['special_namespace'].':Preferences', '', array('op' => 'prefs'), false);
