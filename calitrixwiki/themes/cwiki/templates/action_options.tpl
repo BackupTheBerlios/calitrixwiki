@@ -14,7 +14,7 @@
   <td class="td-cell">{if $groupData.perm_access_mask == 0}<span class="light-grey">{$lang.perms_mask_unchanged}</span>{else}{$groupData.perm_access_mask}{/if}</td>
   <td class="td-last">
    <a href="{wikiurl page="`$pageName`" action="options" op="perms" o="change" gid="`$groupId`"}" class="wiki-internal">{$lang.perms_edit_perms}</a> | 
-   <a href="{wikiurl page="`$pageName`" action="option" op="perms" o="reset" gid="`$groupId`"}" class="wiki-internal">{$lang.perms_reset_perms}</a></td>
+   <a href="{wikiurl page="`$pageName`" action="options" op="perms" o="reset" gid="`$groupId`"}" class="wiki-internal">{$lang.perms_reset_perms}</a></td>
  </tr>
  {/foreach}
 </table>
