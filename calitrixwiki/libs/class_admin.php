@@ -299,11 +299,11 @@ class admin extends core
 				$nIndent = $indent + strlen($key) + 12 + $indent2;
 				$code   .= str_repeat(' ', $indent).'\''.$key.'\''.str_repeat(' ', $indent2).' => '.$this->rdumpArray($val, $nIndent).",\n";
 			} else {
-				$val      = addslashes($val);
-				$val      = str_replace('$',  '\$', $val);
-				$val      = str_replace("\n", '\n', $val);
+				$val      = str_replace('\'',   '\\\'',         $val);
+				$val      = str_replace("\r\n", '\'."\r\n".\'', $val);
+				$val      = str_replace("\n",   '\'."\n".\'',   $val);
 				$indent2  = $maxLen - strlen($key);
-				$code    .= str_repeat(' ', $indent).'\''.$key.'\''.str_repeat(' ', $indent2).' => "'.$val.'",'."\n";
+				$code    .= str_repeat(' ', $indent).'\''.$key.'\''.str_repeat(' ', $indent2).' => \''.$val.'\','."\n";
 			}
 		}
 		
