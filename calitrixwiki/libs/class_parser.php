@@ -129,7 +129,7 @@ class parser
 		                     '$this->createHeading(\'\1\', \'\2\')',
 		                     $text);  // Headings
 		
-		$text = preg_replace('/(%%%|&lt;br( \/)?&gt;)/',              '<br />',                              $text);  // Explizit line breaks ...
+		$text = preg_replace('/&lt;br( \/)?&gt;/',                    '<br />',                              $text);  // Explizit line breaks ...
 		$text = preg_replace('/^----+/m',                             '<hr />',                              $text);  // Horizontal ruler
 		$text = preg_replace('/^-&gt;&lt;-(.+?)$/m',                  '<div class="wiki-centered">\1</div>', $text);  // Centered text
 		$text = preg_replace('/^-&gt;(.+?)$/m',                       '<div class="wiki-right">\1</div>',    $text);  // Right-aligned text

@@ -1,7 +1,7 @@
 <?PHP 
 // This is a auto-generated file. Do not edit it directly. 
 // Instead, always use the administration area of this Wiki to change configuration settings.
-// Generated on 12.09.04 15:15.
+// Generated on 22.03.05 04:12.
 
 $cfg = array(
 'actions'              => array(
@@ -16,14 +16,16 @@ $cfg = array(
                                 'heading'          => '<a name="%1$s"></a><h%2$s>%3$s</h%2$s>',
                                 'image'            => '%s',
                                 'link_create'      => '%2$s<a href="%1$s" class="wiki-create"%3$s>?</a>',
+                                'link_email'       => '<a href="%1$s" class="wiki-email">%2$s</a>',
+                                'link_external'    => '<a href="%1$s" class="wiki-external">%2$s</a>',
                                 'link_internal'    => '<a href="%1$s" class="wiki-internal"%3$s>%2$s</a>',
                                 'link_interwiki'   => '<a href="%1$s" class="wiki-interwiki"%3$s>%2$s</a>',
                                 'TOC'              => '<div class="wiki-toc" id="toc">%1$s [<a href="javascript:void(0)" onclick="toggleBox(\'toc\');toggleBox(\'stoc\')">%2$s</a>]'."\r\n".'%3$s'."\r\n".'</div><div class="wiki-toc" id="stoc" style="display:none">%1$s [<a href="javascript:void(0)" onclick="toggleBox(\'toc\');toggleBox(\'stoc\')">%4$s</a>]</div>',
-                                'trail'            => '%s <a href="%s">%s</a> %s',
-                                'trail_emptyleft'  => '&lt;&lt; ',
-                                'trail_emptyright' => ' &gt;&gt;',
-                                'trail_linkleft'   => '<a href="%s">%s</a>&lt;&lt; ',
-                                'trail_linkright'  => ' &gt;&gt;<a href="%s">%s</a>'
+                                'trail'            => '<table cellpadding="0" cellpadding="0" border="0" style="background:#f1f1f1;border:1px #cdcdcd solid;"><tr><td width="33%%">%s&laquo;</td><td width="34%%" align="center"><a href="%s">%s</a></td><td width="33%%" align="right">&raquo;%s</td></tr></table>',
+                                'trail_emptyleft'  => '',
+                                'trail_emptyright' => '',
+                                'trail_linkleft'   => '<a href="%s">%s</a>',
+                                'trail_linkright'  => '<a href="%s">%s</a>'
                                 ),
 'actions_dir'          => '/var/www/dev/calitrixwiki/actions',
 'auto_link'            => '1',
@@ -38,15 +40,13 @@ $cfg = array(
 'default_lang'         => 'de',
 'default_namespace'    => 'Main',
 'default_page'         => 'HomePage',
-'default_theme'        => 'cw',
+'default_theme'        => 'cw10b2',
 'default_user_group'   => '2',
 'display_namespaces'   => '1',
 'doc_root'             => '/var/www/dev/calitrixwiki',
-'enable_caching'       => '0',
 'enable_url_rewriting' => '0',
-'html_newline'         => '<br />',
-'html_paragraph'       => '<p></p>',
 'indent_width'         => '30',
+'install_time'         => '1085497602',
 'items_per_page'       => '20',
 'lang_dir'             => '/var/www/dev/calitrixwiki/lang',
 'lib_dir'              => '/var/www/dev/calitrixwiki/libs',
@@ -73,11 +73,12 @@ $cfg = array(
 'thiswiki_interwiki'   => 'ThisWiki',
 'title_format'         => '([A-Z\xc0-\xde][a-z\xdf-\xff]+:)?([A-Za-z0-9\xc0-\xff_-]+)',
 'title_format_search'  => '(?<=\s|^)([A-Z\xc0-\xde][a-z\xdf-\xff]+:)?(([A-Z\xc0-\xde][a-z0-9\xdf-\xff]+){2,})(?=\s|\.|,|;|:|$)',
-'url_format'           => 'http://192.168.2.100/dev/calitrixwiki/cwiki.php?page=%1$s&action=%2$s',
-'url_format_short'     => 'http://192.168.2.100/dev/calitrixwiki/cwiki.php?page=%1$s',
-'url_root'             => 'http://192.168.2.100/dev/calitrixwiki',
+'url_format'           => 'http://192.168.2.99/dev/calitrixwiki/cwiki.php?page=%1$s&action=%2$s',
+'url_format_short'     => 'http://192.168.2.99/dev/calitrixwiki/cwiki.php?page=%1$s',
+'url_root'             => 'http://192.168.2.99/dev/calitrixwiki',
 'users_namespace'      => 'User',
 'wiki_title'           => 'CalitrixWiki',
+'wiki_version'         => '1.0 Beta 2',
 'interwiki'            => array(
                                 'C2'        => 'http://c2.com/cgi/wiki?%s',
                                 'Calitrix'  => 'http://www.calitrix.de/%s',
@@ -101,34 +102,6 @@ $cfg = array(
                                 '0' => 'User',
                                 '1' => 'Main',
                                 '2' => 'Wiki'
-                                ),
-'sitemap_chars'        => array(
-                                'A' => '0',
-                                'B' => '0',
-                                'C' => '0',
-                                'D' => '0',
-                                'E' => '0',
-                                'F' => '0',
-                                'G' => '0',
-                                'H' => '0',
-                                'I' => '0',
-                                'J' => '0',
-                                'K' => '0',
-                                'L' => '0',
-                                'M' => '0',
-                                'N' => '0',
-                                'O' => '0',
-                                'P' => '0',
-                                'Q' => '0',
-                                'R' => '0',
-                                'S' => '0',
-                                'T' => '0',
-                                'U' => '0',
-                                'V' => '0',
-                                'W' => '0',
-                                'X' => '0',
-                                'Y' => '0',
-                                'Z' => '0'
                                 ),
 'style_attributes'     => array(
                                 'background-color' => '/^(#[0-9a-fA-F]{6}|[a-zA-Z-]+)$/',
@@ -160,14 +133,15 @@ $cfg = array(
                                 'vertical-align'   => '/^(top|middle|bottom)$/'
                                 ),
 'themes'               => array(
-                                'cw'    => 'CalitrixWiki v.2',
-                                'cwiki' => 'CalitrixWiki'
+                                'cw10b2' => 'CalitrixWiki 1.0 Beta 2'
                                 ),
 'wiki_styles'          => array(
                                 'highlight' => array(
-                                                     'font-weight'      => 'bold',
                                                      'background-color' => '#ffd800',
                                                      'color'            => '#6e0000'
+                                                     ),
+                                'small'     => array(
+                                                     'font-size' => '0.8em'
                                                      ),
                                 'strike'    => array(
                                                      'text-decoration' => 'line-through'
