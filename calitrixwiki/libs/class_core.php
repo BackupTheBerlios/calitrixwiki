@@ -801,18 +801,20 @@ class core
 	 **/
 	function assignTplVars()
 	{
-		$tpl = &singleton('template');
-		$tpl->assign('lang',         $this->lang);
-		$tpl->assign('cfg',          $this->cfg);
-		$tpl->assign('urlRoot',      $this->cfg['url_root']);
-		$tpl->assign('pageId',       $this->page['page_id']);
-		$tpl->assign('lastModified', $this->convertTime($this->page['page_last_change']));
-		$tpl->assign('pageVersion',  $this->page['page_version']);
-		$tpl->assign('wikiTitle',    $this->cfg['wiki_title']);
-		$tpl->assign('loggedIn',     $this->loggedIn);
-		$tpl->assign('user',         $this->user);
-		$tpl->assign('pageName',     $this->getUniqueName($this->page));
-		$tpl->assign('pageAction',   $this->pageAction);
+		$tpl = &singleton('template') ;
+		$tpl->assign('lang',          $this->lang);
+		$tpl->assign('cfg',           $this->cfg);
+		$tpl->assign('urlRoot',       $this->cfg['url_root']);
+		$tpl->assign('pageId',        $this->page['page_id']);
+		$tpl->assign('lastModified',  $this->convertTime($this->page['page_last_change']));
+		$tpl->assign('pageVersion',   $this->page['page_version']);
+		$tpl->assign('wikiTitle',     $this->cfg['wiki_title']);
+		$tpl->assign('loggedIn',      $this->loggedIn);
+		$tpl->assign('user',          $this->user);
+		$tpl->assign('pageName',      $this->getUniqueName($this->page));
+		$tpl->assign('pageNameOnly',  $this->page['page_name']);
+		$tpl->assign('pageNamespace', $this->page['page_namespace']);
+		$tpl->assign('pageAction',    $this->pageAction);
 		
 		if($this->pageTitle == '') {
 			$tpl->assign('pageTitle', $this->getUniqueName($this->page));
@@ -830,6 +832,8 @@ class core
 		$tpl->assign('canHistory',  $this->hasPerms(PERM_HISTORY));
 		$tpl->assign('canSetLocal', $this->hasPerms(PERM_SETLOCAL));
 		$tpl->assign('canUseAcp',   $this->hasPerms(PERM_USEACP));
+		$tpl->assign('canDelete',   $this->hasPerms(PERM_DELETE));
+		$tpl->assign('canRename',   $this->hasPerms(PERM_RENAME));
 	}
 	
 	/**

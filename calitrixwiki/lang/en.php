@@ -182,6 +182,15 @@ $lang = array(
 'perms_right_delete'           => 'The group can delete this page',
 'perms_submit'                 => 'Update permissions',
 'perms_updated'                => 'Permissions updated.',
-'perms_deleted'                => 'The local permissions for the selected group has been deleted.'
+'perms_deleted'                => 'The local permissions for the selected group has been deleted.',
+'options'                      => 'Options',
+'options_rename'               => 'Rename page',
+'options_rename_desc'          => 'You can set the page name or namespace here.',
+'options_invalid_page_name'    => 'Invalid page name.',
+'options_rename_submit'        => 'Rename',
+'options_renamed'              => 'The page was renamed.',
+'options_delete'               => 'Remove page',
+'options_delete_desc'          => 'To remove to page, check the following checkbox and klick "Remove". This will completely remove the page from the database. Note that the script won\'t ask for a confirmation.',
+'options_delete_submit'        => 'Entfernen',
 );
 ?>

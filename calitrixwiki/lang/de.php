@@ -185,6 +185,15 @@ $lang = array(
 'perms_submit'                 => 'Zugriffsrechte aktualisieren',
 'perms_updated'                => 'Zugriffsrechte aktualisiert.',
 'perms_deleted'                => 'Die Zugriffsrechte der gew&auml;hlten Gruppe f&uuml;r diese Seite wurden gel&ouml;scht.',
+'options'                      => 'Optionen',
+'options_rename'               => 'Seite umbenennen',
+'options_rename_desc'          => 'Der Name einer Seite und der dazugeh&ouml;rige Namensraum kann hier festgelegt werden.',
+'options_invalid_page_name'    => 'Ung&uuml;ltiger Seitenname.',
+'options_rename_submit'        => 'Umbenennen',
+'options_renamed'              => 'Die Seite wurde umbenannt.',
+'options_delete'               => 'Seite entfernen',
+'options_delete_desc'          => 'Um die Seite zu entfernen, markieren sie das folgende K&auml;stchen und klicken sie auf "Entfernen". Dies entfernt die aktuelle Seite unwiderruflich und ohne Nachfrage aus der Datenbank.',
+'options_delete_submit'        => 'Entfernen',
 
 // Language phrases for the admin control panel
 'admin_cp'                     => 'Admin CP',
