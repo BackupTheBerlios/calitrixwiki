@@ -50,9 +50,15 @@ class action_edit extends core
 		
 		$parser = &singleton('parser');
 		$tpl    = &singleton('template');
+		$tpl->assign('isMessage',  false);
+		$tpl->assign('isPreview',  false);
+		$tpl->assign('valSummary', '');
+		$tpl->assign('valAuthor',  '');
 		
-		$tpl->assign('isMessage', false);
-		$tpl->assign('isPreview', false);
+		if($this->loggedIn) {
+			$tpl->assign('valAuthor', htmlentities($this->user['user_name']));
+		}
+		
 		$editText = $this->page['page_text'];
 		
 		/**
@@ -97,6 +103,8 @@ class action_edit extends core
 					$tpl->assign('isPreview',   true);
 					$tpl->assign('previewText', $previewText);
 					$tpl->assign('editText',    htmlentities($this->editText));
+					$tpl->assign('valAuthor',   htmlentities($this->editUsername));
+					$tpl->assign('valSummary',  htmlentities($this->editSummary));
 				} else {
 					$parser->parseSignatures($this->editText);
 					

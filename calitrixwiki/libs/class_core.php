@@ -782,9 +782,12 @@ class core
 			'VALUES('.$page_id.', \''.addslashes($newText).'\', \''.addslashes($pageCache).'\')');
 			
 			$db->query('INSERT INTO '.DB_PREFIX.'changelog(log_page_id, '.
-			'log_page_version, log_time, log_diff) '.
-			'VALUES('.$page_id.', \'1.0.0\', '.
-			$this->time.', \''.serialize(array()).'\')');
+			'log_page_version, log_time, log_diff, log_user_id, log_user_name, '.
+			'log_summary, log_ip) '.
+			'VALUES('.$page_id.', \'1.0.0\', '.$this->time.', '.
+			'\''.serialize(array()).'\', '.$userId.', '.
+			'\''.addslashes($userName).'\', \''.addslashes($summary).'\', '.
+			'\''.addslashes($this->server['REMOTE_ADDR']).'\')');
 		}
 		
 		return true;
