@@ -28,6 +28,8 @@
 class action_options extends core
 {
 	var $optNamespaces = array();
+	var $optTemplate   = 'action_options.tpl';
+	var $permGroups    = array();
 	
 	/**
 	 * Start function
@@ -44,6 +46,7 @@ class action_options extends core
 			$this->messageEnd('wiki_perm_denied');
 		}
 		
+		$this->permGroups    = $this->permGetGroups();
 		$this->optNamespaces = $this->cfg['namespaces'];
 		unset($this->optNamespaces[array_search($this->cfg['special_namespace'], $this->optNamespaces)]);
 		
@@ -56,9 +59,9 @@ class action_options extends core
 			$this->HTTPRedirect($this->genUrl($this->getUniqueName($this->page), '', array(), false));
 		}
 		
-		if($this->request == 'POST') {
-			$this->doOption();
-		}
+		$this->doOption();
+		
+		$tpl->assign('perms', $this->permGroups);
 	}
 	
 	/**
@@ -69,16 +72,31 @@ class action_options extends core
 	 **/
 	function doOption()
 	{
-		if(!isset($this->post['do'])) {
+		if(!isset($this->get['op'])) {
 			return false;
 		}
 		
-		$do = $this->post['do'];
+		$op = $this->get['op'];
 		
-		if($do == 'rename') {
+		if($op == 'rename' && $this->hasPerms(PERM_RENAME)) {
 			$this->renamePage();
-		} elseif($do == 'delete') {
+		} elseif($op == 'delete' && $this->hasPerms(PERM_DELETE)) {
 			$this->deletePage();
+		} elseif($op == 'perms' && $this->hasPerms(PERM_SETLOCAL)) {
+			if(isset($this->get['o']) && isset($this->get['gid'])) {
+				$o  = $this->get['o'];
+				$gid = intval($this->get['gid']);
+				
+				if(isset($this->permGroups[$gid])) {
+					if($o == 'change') {
+						$this->editPerms($gid);
+					} elseif($o == 'reset') {
+						$this->resetGroupPerms($gid);
+						$this->permGroups = $this->permGetGroups();
+						$this->displayPerms($gid);
+					}
+				}
+			}
 		} else {
 			return false;
 		}
@@ -146,6 +164,147 @@ class action_options extends core
 	}
 	
 	/**
+	 * Edits the permissions for a group.
+	 *
+	 * @author Johannes Klose <exe@calitrix.de>
+	 * @param  int $groupId Id of the group which shall be edited
+	 * @return void
+	 **/
+	function editPerms($groupId)
+	{
+		if($this->request == 'POST') {
+			$this->savePerms($groupId);
+			$this->permGroups = $this->permGetGroups();
+			$this->displayPerms($groupId);
+		} else {
+			$this->displayPerms($groupId);
+		}
+		
+		$this->optTemplate = 'action_options_perms.tpl';
+	}
+	
+	/**
+	 * Displays the permissions of the selected group
+	 * for the current page.
+	 *
+	 * @author Johannes Klose <exe@calitrix.de>
+	 * @param  int $groupId Id of the group which shall be displayed
+	 * @return void
+	 **/
+	function displayPerms($groupId)
+	{
+		$tpl        = &singleton('template');
+		$accessMask = (int)$this->permGroups[$groupId]['perm_access_mask'];
+		
+		// Use default access mask of the group if there is no local access mask yet
+		if($accessMask == 0) {
+			$accessMask = (int)$this->permGroups[$groupId]['group_access_mask'];
+		}
+		
+		$permViewChecked    = $this->hasPerms(PERM_VIEW,        $accessMask) ? ' checked="checked"' : '';
+		$permEditChecked    = $this->hasPerms(PERM_EDIT,        $accessMask) ? ' checked="checked"' : '';
+		$permHistoryChecked = $this->hasPerms(PERM_HISTORY,     $accessMask) ? ' checked="checked"' : '';
+		$permRestoreChecked = $this->hasPerms(PERM_RESTORE,     $accessMask) ? ' checked="checked"' : '';
+		$permRenameChecked  = $this->hasPerms(PERM_RENAME,      $accessMask) ? ' checked="checked"' : '';
+		$permDeleteChecked  = $this->hasPerms(PERM_DELETE,      $accessMask) ? ' checked="checked"' : '';
+		
+		$tpl->assign('permViewChecked',    $permViewChecked);
+		$tpl->assign('permEditChecked',    $permEditChecked);
+		$tpl->assign('permHistoryChecked', $permHistoryChecked);
+		$tpl->assign('permRestoreChecked', $permRestoreChecked);
+		$tpl->assign('permRenameChecked',  $permRenameChecked);
+		$tpl->assign('permDeleteChecked',  $permDeleteChecked);
+		$tpl->assign('groupId',            $groupId);
+		
+		$this->lang['perms_change_desc'] = sprintf($this->lang['perms_change_desc'], 
+		                                           $this->permGroups[$groupId]['group_name']);
+	}
+	
+	/**
+	 * Saves a modified access mask.
+	 *
+	 * @author Johannes Klose <exe@calitrix.de>
+	 * @param  int $groupId Id of the group which shall be saved
+	 * @return void
+	 **/
+	function savePerms($groupId)
+	{
+		$db  = &singleton('database');
+		$tpl = &singleton('template');
+		
+		$permView    = isset($this->post['perm_view'])    ? PERM_VIEW        : 0;
+		$permEdit    = isset($this->post['perm_edit'])    ? PERM_EDIT        : 0;
+		$permHistory = isset($this->post['perm_history']) ? PERM_HISTORY     : 0;
+		$permRestore = isset($this->post['perm_restore']) ? PERM_RESTORE     : 0;
+		$permRename  = isset($this->post['perm_rename'])  ? PERM_RENAME      : 0;
+		$permDelete  = isset($this->post['perm_delete'])  ? PERM_DELETE      : 0;
+		
+		$newMask = $permView | $permEdit | $permHistory | $permRestore |
+		           $permRename | $permDelete;
+		
+		$result = $db->query('SELECT * FROM '.DB_PREFIX.'local_masks '.
+		'WHERE perm_page_id = '.$this->page['page_id'].' AND perm_group_id = '.$groupId);
+		
+		if($db->numRows($result) > 0) {
+			$db->query('UPDATE '.DB_PREFIX.'local_masks '.
+			'SET perm_access_mask = '.$newMask.' '.
+			'WHERE perm_page_id = '.$this->page['page_id'].' AND perm_group_id = '.$groupId);
+		} else {
+			$db->query('INSERT INTO '.DB_PREFIX.'local_masks(perm_page_id, perm_group_id, perm_access_mask) '.
+			'VALUES('.$this->page['page_id'].', '.$groupId.', '.$newMask.')');
+		}
+		
+		$tpl->assign('isMessage', true);
+		$tpl->assign('message',   $this->lang['perms_updated']);
+	}
+	
+	/**
+	 * Removes the local access mask of a group.
+	 *
+	 * @author Johannes Klose <exe@calitrix.de>
+	 * @param  int $groupId Id of the group which shall be reseted
+	 * @return void
+	 **/
+	function resetGroupPerms($groupId)
+	{
+		$db  = &singleton('database');
+		$tpl = &singleton('template');
+		
+		$db->query('DELETE FROM '.DB_PREFIX.'local_masks '.
+		'WHERE perm_page_id = '.$this->page['page_id'].' '.
+		'AND perm_group_id = '.$groupId);
+		
+		$tpl->assign('isMessage', true);
+		$tpl->assign('message',   $this->lang['perms_deleted']);
+	}
+	
+	/**
+	 * Loads all groups and their access masks for
+	 * this page from the database.
+	 *
+	 * @author Johannes Klose <exe@calitrix.de>
+	 * @return array Groups and their permissions
+	 **/
+	function permGetGroups()
+	{
+		$db    = &singleton('database');
+		$perms = array();
+		
+		$result = $db->query('SELECT g.group_id, g.group_name, g.group_access_mask, p.perm_access_mask '.
+		'FROM '.DB_PREFIX.'groups g LEFT JOIN '.DB_PREFIX.'local_masks p '.
+		'ON p.perm_page_id = '.$this->page['page_id'].' AND p.perm_group_id = g.group_id '.
+		'ORDER BY g.group_id');
+		
+		while($row = $db->fetch($result))
+		{
+			$row['group_name'] = htmlentities($row['group_name']);
+			$perms[$row['group_id']] = $row;
+		}
+		
+		return $perms;
+	}
+	
+	/**
 	 * Returns the template name for this action.
 	 *
 	 * @author Johannes Klose <exe@calitrix.de>
@@ -153,7 +312,7 @@ class action_options extends core
 	 **/
 	function getTemplate()
 	{
-		return 'action_options.tpl';
+		return $this->optTemplate;
 	}
 }
 ?>
