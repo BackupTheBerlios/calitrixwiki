@@ -64,8 +64,13 @@ $action = isset($_GET['action'])                      ? strtolower($_GET['action
 // Extract the namespace:WikiPage components from the page parameter.
 // If the page parameter doesnt match, page name and namespace are set to false.
 if(preg_match('/^'.$cfg['title_format'].'$/', $page, $match)) {
-	$pageName  = $match[2];
-	$namespace = substr($match[1], 0, strlen($match[1]) - 1);
+	if(strlen($match[1]) > 30 || strlen($match[2]) > 50) {
+		$pageName  = false;
+		$namespace = false;
+	} else {
+		$pageName  = $match[2];
+		$namespace = substr($match[1], 0, strlen($match[1]) - 1);
+	}
 } else {
 	$pageName  = false;
 	$namespace = false;
