@@ -66,6 +66,7 @@ $lang = array(
 'wiki_addpage_submit'       => 'Create',
 'edit_page'                 => 'Edit page',
 'edit_locked'               => 'This page is locked and can not be edited but you may view the source text.',
+'edit_info'                 => 'Edit informations',
 'edit_author'               => 'Author',
 'edit_summary'              => 'Summary',
 'edit_submit'               => 'Save page',

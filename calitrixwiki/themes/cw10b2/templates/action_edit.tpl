@@ -7,16 +7,18 @@
 <input type="hidden" name="edit_start" value="{$editStart}" />
 <textarea name="page_text" rows="30" cols="60">{$editText}</textarea>
 {if $allowSubmit}<br /><br />
-<div style="float:left;margin-right:10px">
+
+<fieldset>
+<legend>{$lang.edit_info}</legend>
 {$lang.edit_author}<br />
 <input type="text" name="page_author" size="25" value="{$valAuthor}" /><br /><br />
-</div>
-<div>{$lang.edit_summary}<br />
+
+{$lang.edit_summary}<br />
 <input type="text" name="page_summary" size="40" value="{$valSummary}" /><br /><br />
-</div>
-<div style="clear:left">
+
 <input type="submit" value="{$lang.edit_submit}" name="save" accesskey="s" title="(Alt + S)" />&nbsp;&nbsp;<input type="submit" value="{$lang.edit_preview}" name="preview" accesskey="p" title="(Alt + P)" />
-</div>{/if}
+{/if}
+</fieldset>
 </form>
 
 {if $isPreview}

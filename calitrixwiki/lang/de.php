@@ -66,6 +66,7 @@ $lang = array(
 'wiki_addpage_submit'       => 'Erstellen',
 'edit_page'                 => 'Seite bearbeiten',
 'edit_not_editable'         => 'Sie haben nicht die notwendigen Rechte diese Seite zu bearbeiten. Sie k&ouml;nnen sich lediglich den Quelltext ansehen.',
+'edit_info'                 => 'Bearbeitungsinformationen',
 'edit_author'               => 'Autor',
 'edit_summary'              => 'Zusammenfassung',
 'edit_submit'               => 'Seite speichern',

@@ -42,9 +42,9 @@ input, textarea{
 	background-color:#fafafa;
 }
 
-textarea, table, fieldset {
+textarea, table, fieldset, pre {
 	margin:0px;
-	width:98%;
+	width:97%;
 }
 
 input[type=submit], input[type=reset], input[type=button] {
@@ -55,16 +55,6 @@ input[type=submit], input[type=reset], input[type=button] {
 	font-size:12px;
 	background-color:#dedede;
 	margin:0px;
-}
-
-#content p {
-	margin-top:10px;
-	margin-bottom:10px;
-}
-
-#menu p {
-	margin:0px;
-	margin-bottom:10px;
 }
 
 #wrapper {
@@ -105,6 +95,11 @@ input[type=submit], input[type=reset], input[type=button] {
 	border:1px #cdcdcd solid;
 }
 
+#menu p {
+	margin:0px;
+	margin-bottom:10px;
+}
+
 #menu ul {
 	margin:0px;
 	padding-left:20px;
@@ -126,15 +121,19 @@ input[type=submit], input[type=reset], input[type=button] {
 
 #content {
 	padding:5px;
-	padding-left:7px;
-	margin-left:170px;
+	padding-left:180px;
+}
+
+#content p {
+	margin-top:10px;
+	margin-bottom:10px;
 }
 
 #content h1 {
 	margin:0px;
 	padding:0px;
 	margin-bottom:10px;
-	margin-top:5px;
+	margin-top:10px;
 	font-size:1.6em;
 	color: #00375e;
 	font-weight:bold;
@@ -144,6 +143,7 @@ input[type=submit], input[type=reset], input[type=button] {
 #content h2 {
 	margin:0px;
 	padding:0px;
+	margin-top:8px;
 	margin-bottom:8px;
 	font-size:1.3em;
 	color: #000000;
@@ -153,6 +153,7 @@ input[type=submit], input[type=reset], input[type=button] {
 #content h3 {
 	margin:0px;
 	padding:0px;
+	margin-top:6px;
 	margin-bottom:6px;
 	font-size:1.2em;
 	color: #000000;
@@ -192,50 +193,50 @@ input[type=submit], input[type=reset], input[type=button] {
 }
 
 fieldset {
- background-color:#fafafa;
- border:1px #cdcdcd solid;
- padding:4px;
- margin-bottom:10px;
+	background-color:#fafafa;
+	border:1px #cdcdcd solid;
+	padding:4px;
+	margin-bottom:15px;
 }
 
 fieldset legend {
- background-color:#e0ecfd;
- border:1px #cdcdcd solid;
- font-weight:bold;
+	background-color:#e0ecfd;
+	border:1px #cdcdcd solid;
+	font-weight:bold;
 }
 
 td.td-head {
- border-bottom:1px #083760 solid;
- color:#083760;
- font-weight:bold;
- padding:3px;
+	border-bottom:1px #083760 solid;
+	color:#083760;
+	font-weight:bold;
+	padding:3px;
 }
 
 td.td-first {
- padding:3px;
- border-right:1px #ababab solid;
- border-bottom:1px #efefef solid;
+	padding:3px;
+	border-right:1px #ababab solid;
+	border-bottom:1px #efefef solid;
 }
 
 td.td-cell {
- padding:3px;
- border-right:1px #ababab solid;
- border-bottom:1px #efefef solid;
+	padding:3px;
+	border-right:1px #ababab solid;
+	border-bottom:1px #efefef solid;
 }
 
 td.td-last {
- padding:3px;
- border-bottom:1px #efefef solid;
+	padding:3px;
+	border-bottom:1px #efefef solid;
 }
 
 span.light-grey {
- color:#676767;
- font-style:italic;
+	color:#676767;
+	font-style:italic;
 }
 
 span.small-grey {
- color:#676767;
- font-size:84%;
+	color:#676767;
+	font-size:84%;
 }
 
 span.highlight {
@@ -250,22 +251,23 @@ small {
 
 /* Wiki markups */
 div.wiki-toc {
- background-color:#fafafa;
- border:1px #efefef solid;
- font-weight:bold;
+	padding:4px;
+	background-color:#fafafa;
+	border:1px #efefef solid;
+	font-weight:bold;
 }
 
 div.wiki-toc ol li {
- font-weight:normal;
+	font-weight:normal;
 }
 
 div.wiki-toc a {
- text-decoration:none;
- font-weight:normal;
+	text-decoration:none;
+	font-weight:normal;
 }
 
 div.wiki-toc a:hover {
- text-decoration:underline;
+	text-decoration:underline;
 }
 
 #message-end {
@@ -286,13 +288,12 @@ tt {
 }
 
 pre {
- background-color:#fafafa;
- border:1px #cdcdcd solid;
- font-size:1.1em;
- font-family:monospace;
- overflow:auto;
- width:97%;
- padding:4px;
+	background-color:#fafafa;
+	border:1px #cdcdcd solid;
+	font-size:1.1em;
+	font-family:monospace;
+	overflow:auto;
+	padding:4px;
 }
 
 a.wiki-internal {
