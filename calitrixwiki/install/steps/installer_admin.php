@@ -96,6 +96,7 @@ class installer_admin extends installer
 		if(@mysql_query($sql)) {
 			$tpl->assign('isError', false);
 			$this->adminTemplate = 'installer_ni_finished.tpl';
+			$this->lockInstaller();
 		} else {
 			$tpl->assign('isError', true);
 			$tpl->assign('error',   mysql_error());

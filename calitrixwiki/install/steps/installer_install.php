@@ -59,6 +59,8 @@ class installer_install extends installer
 	 **/
 	function installDatabase($defaultPages)
 	{
+		$tpl = &singleton('template');
+		
 		include CWIKI_INSTALL_DIR.'/mysql.php';
 		include CWIKI_SET_DIR.'/dbconfig.php';
 		
@@ -70,6 +72,11 @@ class installer_install extends installer
 			if(!@mysql_query('CREATE TABLE '.DB_PREFIX.$tbl.$sql)) {
 				return false;
 			}
+		}
+		
+		if(count($tableConflict) > 0) {
+			$tpl->assign('isError', true);
+			$tpl->assign('error',   sprintf($this->lang['install_conflict'], join(', ', $tableConflict)));
 		}
 		
 		foreach($data['groups'] as $sql)

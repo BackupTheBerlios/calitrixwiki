@@ -90,8 +90,12 @@ class installer_config extends installer
 			return false;
 		}
 		
-		$this->writeDbConfig($dbHost, $dbName, $dbUser, $dbPass, $dbPrefix);
-		$this->writeWikiConfig($urlRoot, $docRoot);
+		if(!$this->writeDbConfig($dbHost, $dbName, $dbUser, $dbPass, $dbPrefix) || !$this->writeWikiConfig($urlRoot, $docRoot)) {
+			$tpl->assign('isError', true);
+			$tpl->assign('errors',  array(sprintf($this->lang['config_write_failed'], CWIKI_SET_DIR)));
+			return false;
+		}
+		
 		
 		$params = array('step' => 'install', 'lang' => CWIKI_INSTALL_LANG, 'idf' => $defaultPages ? 1 : 0);
 		header('Location: '.$this->genUrl($params));
@@ -119,9 +123,16 @@ class installer_config extends installer
 		$file .= "define('DB_PREFIX', '$dbPrefix');\n";
 		$file .= "?>";
 		
-		$fp = fopen(CWIKI_SET_DIR.'/dbconfig.php', 'w');
+		$fp = @fopen(CWIKI_SET_DIR.'/dbconfig.php', 'w');
+		
+		if(!$fp) {
+			return false;
+		}
+		
 		fputs($fp, $file);
 		fclose($fp);
+		
+		return true;
 	}
 	
 	/**
@@ -153,9 +164,16 @@ class installer_config extends installer
 		$file .= ";\n";
 		$file .= '?>';
 		
-		$fp = fopen(CWIKI_SET_DIR.'/stdconfig.php', 'w');
+		$fp = @fopen(CWIKI_SET_DIR.'/stdconfig.php', 'w');
+		
+		if(!$fp) {
+			return false;
+		}
+		
 		fputs($fp, $file);
 		fclose($fp);
+		
+		return true;
 	}
 	
 	/**
