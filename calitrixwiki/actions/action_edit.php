@@ -91,7 +91,7 @@ class action_edit extends core
 				if(isset($this->post['preview'])) {
 					$previewPage = $this->page;
 					$previewPage['page_text'] = $this->editText;
-					$parser->parseSignatures($previewText);
+					$parser->parseSignatures($previewPage['page_text']);
 					$previewText = $parser->parseText($previewPage);
 					
 					$tpl->assign('isPreview',   true);
