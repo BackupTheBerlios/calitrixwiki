@@ -19,7 +19,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  **/
 
-class installer_updateb1 extends installer
+class installer_updateb2 extends installer
 {
 	/**
 	 * Does everything needed to be done for this step.
@@ -83,7 +83,7 @@ class installer_updateb1 extends installer
 		
 		if($cfg === false) {
 			$tpl->assign('isError', true);
-			$tpl->assign('error',   sprintf($this->lang['updateb2_update_failed'], mysql_error));
+			$tpl->assign('error',   sprintf($this->lang['updateb2_update_failed'], mysql_error()));
 			return false;
 		}
 		
@@ -102,9 +102,9 @@ class installer_updateb1 extends installer
 	{
 		include $setFile;
 		
-		$cfg['wiki_version']                      = '1.0 Beta 3';
-		$cfg['themes']                            = array('cw10b2' => 'CalitrixWiki 1.0 Beta 2');
-		$cfg['interwiki']                         = array_merge($cfg['interwiki'], $cfg['inter_wiki']);
+		$cfg['wiki_version'] = '1.0 Beta 3';
+		$cfg['themes']       = array('cw10b2' => 'CalitrixWiki 1.0 Beta 2');
+		$cfg['interwiki']    = array_merge($cfg['interwiki'], $cfg['inter_wiki']);
 		
 		return $cfg;
 	}

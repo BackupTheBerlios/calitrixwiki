@@ -73,7 +73,7 @@ class installer_updateb1 extends installer
 		
 		if($cfg === false) {
 			$tpl->assign('isError', true);
-			$tpl->assign('error',   sprintf($this->lang['updateb1_update_failed'], mysql_error));
+			$tpl->assign('error',   sprintf($this->lang['updateb1_update_failed'], mysql_error()));
 			return false;
 		}
 		
@@ -100,10 +100,10 @@ class installer_updateb1 extends installer
 		$cfg['enable_url_rewriting']              = 0;
 		$cfg['rewrite_rule_match']                = '^([^?./]+)$';
 		$cfg['rewrite_rule_replace']              = 'cwiki.php?page=$1&%{QUERY_STRING}';
-		$cfg['wiki_version']                      = '1.0 Beta 2';
+		$cfg['wiki_version']                      = '1.0 Beta 3';
 		$cfg['install_time']                      = $this->time;
 		$cfg['default_theme']                     = 'cw10b2';
-		$cfg['themes']['cw']                      = 'CalitrixWiki 1.0 Beta 2';
+		$cfg['themes']                            = array('cw10b2' => 'CalitrixWiki 1.0 Beta 2');
 		$cfg['actions']['options']                = 'options';
 		$cfg['actions']['print']                  = 'view';
 		$cfg['code_snippets']['link_email']       = '<a href="%1$s" class="wiki-email">%2$s</a>';
@@ -122,9 +122,9 @@ class installer_updateb1 extends installer
 		$cfg['wiki_styles']['strike']              = array('text-decoration' => 'line-through');
 		$cfg['wiki_styles']['underline']           = array('text-decoration' => 'underline');
 		$cfg['wiki_styles']['small']               = array('font-size' => '0.8em');
-		$cfg['inter_wiki']['UseMod']               = 'http://www.usemod.com/cgi-bin/wiki.pl?%s';
-		$cfg['inter_wiki']['Calitrix']             = 'http://www.calitrix.de/%s';
-		$cfg['inter_wiki']['C2']                   = 'http://c2.com/cgi/wiki?%s';
+		$cfg['interwiki']['UseMod']                = 'http://www.usemod.com/cgi-bin/wiki.pl?%s';
+		$cfg['interwiki']['Calitrix']              = 'http://www.calitrix.de/%s';
+		$cfg['interwiki']['C2']                    = 'http://c2.com/cgi/wiki?%s';
 		
 		unset($cfg['html_newline']);
 		unset($cfg['html_paragraph']);

@@ -5,7 +5,7 @@
 </p>
 
 
-<form method="post" action="{wikiurl step="updateb1" lang="`$currentLang`"}">
+<form method="post" action="{wikiurl step="updateb2" lang="`$currentLang`"}">
 <fieldset>
 <legend>{$lang.updateb2_paths}</legend>
 {$lang.updateb2_set_dir}<br />
