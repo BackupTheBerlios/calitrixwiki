@@ -26,8 +26,8 @@
  **/
 class admin extends core
 {
-	var $origConfig = array();
-	var $newConfig  = array();
+	var $origConfig   = array();
+	var $newConfig    = array();
 	
 	/**
 	 * Constructor function; calls the core constructor and does
@@ -130,7 +130,7 @@ class admin extends core
 			$tables[$row['Name']]['table_size']       = $this->HRFileSize($row['Data_length'] + $row['Index_length']);
 			$tables[$row['Name']]['table_rows']       = $row['Rows'];
 			$tables[$row['Name']]['auto_increment']   = (int)$row['Auto_increment'];
-			$tables[$row['Name']]['table_type']       = $row['Type'];
+			$tables[$row['Name']]['table_type']       = $db->serverVersion[0] == '4' && $db->serverVersion[1] == '1' ? $row['Engine'] : $row['Type'];
 		}
 		
 		return $tables;

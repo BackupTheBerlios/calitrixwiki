@@ -36,6 +36,8 @@ class database
 	var $password;
 	var $database;
 	var $query_debug;
+	var $serverVersion = '';
+	var $shortVersion  = '';
 	
 	/**
 	 * Class constructor; sets variables
@@ -60,7 +62,8 @@ class database
 	 **/
 	function connect()
 	{
-		$this->conn = mysql_connect($this->host, $this->user, $this->password) or $this->error(mysql_error(), __LINE__, __FILE__);
+		$this->conn          = mysql_connect($this->host, $this->user, $this->password) or $this->error(mysql_error(), __LINE__, __FILE__);
+		$this->serverVersion = explode('.', preg_replace('/^(\d+)\.(\d+)\.(\d+)(.*?)$/', '\1.\2.\3', mysql_get_server_info()));
 		$this->select_db();
 	}
 	

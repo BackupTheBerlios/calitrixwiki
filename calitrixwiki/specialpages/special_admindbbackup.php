@@ -228,8 +228,12 @@ class special_admindbbackup extends admin
 				$indexes[$row['Key_name']] = array(
 				                                   'unique'  => $row['Non_unique'] == 1 ? false : true,
 				                                   'columns' => array($row['Column_name']),
-				                                   'type'    => $row['Index_type']
 				                                   );
+				if($db->serverVersion[0] == '3') {
+					$indexes[$row['Key_name']]['type'] = $row['Comment'] == 'FULLTEXT' ? 'FULLTEXT' : 'BTREE';
+				} else {
+					$indexes[$row['Key_name']]['type'] = $row['Index_type'];
+				}
 				continue;
 			}
 			
