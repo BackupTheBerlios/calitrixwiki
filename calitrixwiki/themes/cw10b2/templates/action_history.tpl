@@ -12,7 +12,7 @@
   {$lang.history_version} {$log.log_page_version} (<a href="{wikiurl page="`$pageName`" v="`$log.log_page_version`"}" class="wiki-internal">{$lang.history_view}</a> | <a href="{wikiurl page="`$pageName`" action="edit" v="`$log.log_page_version`"}" class="wiki-internal">{$lang.history_restore}</a>)<br />
   <span class="small-grey">{$log.log_time} {if $log.user_name != ''}<a href="{wikiurl page="`$cfg.users_namespace`:`$log.user_name`"}" class="wiki-internal">{$log.user_name}</a>{/if}
    {if $log.log_summary != ''}({$log.log_summary}){/if}</span>
- </tr>
+ </li>
 {/foreach}
 </ul>
 {include file="page_links.tpl"}
