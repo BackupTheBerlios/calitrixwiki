@@ -119,16 +119,17 @@ class parser
 		$text = preg_replace('/^(={2,4})(.+?)(\1)($|\n\r|\n|\r)/me',
 		                     '$this->createHeading(\'\1\', \'\2\')',
 		                     $text);  // Headings
-		$text = preg_replace('/^----+/m',                    '<hr />',                              $text);  // Horizontal ruler
-		$text = preg_replace('/^-&gt;&lt;-(.+?)$/m',         '<div class="wiki-centered">\1</div>', $text);  // Centered text
-		$text = preg_replace('/^-&gt;(.+?)$/m',              '<div class="wiki-right">\1</div>',    $text);  // Right-aligned text
-		$text = preg_replace('/^&lt;-(.+?)$/m',              '<div class="wiki-left">\1</div>',     $text);  // Left-aligned text
-		$text = preg_replace('/\'\'\'\'\'(.+?)\'\'\'\'\'/s', '<strong><em>\1</em></strong>',        $text);  // Double emphasis
-		$text = preg_replace('/\'\'\'(.+?)\'\'\'/s',         '<strong>\1</strong>',                 $text);  // Strong emphasis
-		$text = preg_replace('/\'\'(.+?)\'\'/s',             '<em>\1</em>',                         $text);  // Emphasized text
-		$text = preg_replace('/@@(.+?)@@/s',                 '<tt>\1</tt>',                         $text);  // Monospace text
-		$text = preg_replace('/^([:]+)(.+?)$/me',            '$this->indentText(\'\1\', \'\2\')',   $text);  // Indented text
-		$text = preg_replace('/\[\$([A-Za-z0-9]+)\]/e',      '$this->replaceUserVar(\'\1\')',       $text);  // Replace user vars in the text
+		$text = preg_replace('/^----+/m',                             '<hr />',                              $text);  // Horizontal ruler
+		$text = preg_replace('/^-&gt;&lt;-(.+?)$/m',                  '<div class="wiki-centered">\1</div>', $text);  // Centered text
+		$text = preg_replace('/^-&gt;(.+?)$/m',                       '<div class="wiki-right">\1</div>',    $text);  // Right-aligned text
+		$text = preg_replace('/^&lt;-(.+?)$/m',                       '<div class="wiki-left">\1</div>',     $text);  // Left-aligned text
+		$text = preg_replace('/\'\'\'\'\'(.+?)\'\'\'\'\'/s',          '<strong><em>\1</em></strong>',        $text);  // Double emphasis
+		$text = preg_replace('/\'\'\'(.+?)\'\'\'/s',                  '<strong>\1</strong>',                 $text);  // Strong emphasis
+		$text = preg_replace('/\'\'(.+?)\'\'/s',                      '<em>\1</em>',                         $text);  // Emphasized text
+		$text = preg_replace('/@@(.+?)@@/s',                          '<tt>\1</tt>',                         $text);  // Monospace text
+		$text = preg_replace('/^([:]+)(.+?)$/me',                     '$this->indentText(\'\1\', \'\2\')',   $text);  // Indented text
+		$text = preg_replace('/\[\$([A-Za-z0-9]+)\]/e',               '$this->replaceUserVar(\'\1\')',       $text);  // Replace user vars in the text
+		$text = preg_replace('/(?<=\s)([A-Za-z.-]+)\((.*?)\)(?=\s)/', '<acronym title="\2">\1</acronym>',    $text);  // Acronyms
 		
 		// Before we start with links we must parse image tags.
 		$text = preg_replace('/\[\[(([a-z]+)\:\/\/[a-zA-Z0-9\-\.]+([\S]*)(\.(gif|jpg|jpeg|png|bmp|tiff)))'.
@@ -1062,11 +1063,11 @@ class parser
 		$text = preg_replace('/\'\'\'(.+?)\'\'\'/s',                                '\1', $text);
 		$text = preg_replace('/\'\'(.+?)\'\'/s',                                    '\1', $text);
 		$text = preg_replace('/@@(.+?)@@/s',                                        '\1', $text);
-		$text = preg_replace('/^([:]+)(.+?)$/me',                                   '\2', $text);
-		$text = preg_replace('/\[\$([A-Za-z0-9]+)\]/e',                             '',   $text);
+		$text = preg_replace('/^([:]+)(.+?)$/m',                                    '\2', $text);
+		$text = preg_replace('/\[\$([A-Za-z0-9]+)\]/',                              '',   $text);
 		
 		$text = preg_replace('/\[\[(([a-z]+)\:\/\/[a-zA-Z0-9\-\.]+([\S]*)(\.(gif|jpg|jpeg|png|bmp|tiff)))'.
-		                     '( (\d+)?,(\d+)?)?( (left|right|none))?( ?(.+?))?\]\]/e', '\1', $text);
+		                     '( (\d+)?,(\d+)?)?( (left|right|none))?( ?(.+?))?\]\]/', '\1', $text);
 		
 		$text = preg_replace('/(?<=\s|^)(([a-z]+)\:\/\/[a-zA-Z0-9\-\.]+([\S]*))/',      '\1', $text);
 		$text = preg_replace('/\[\[(([a-z]+)\:\/\/[a-zA-Z0-9\-\.]+([\S]*))\]\]/',       '\1', $text);
@@ -1080,7 +1081,7 @@ class parser
 		$text = preg_replace('/\[\['.$wiki->cfg['title_format'].'( .+?)?\]\]([a-z]+)?/e',
 		                     '$this->stripWikiLinkTags(\'\1\2\', \'\3\', \'\4\')', $text);
 		
-		$text = preg_replace('/\[TOC\]/ie', '',  $text);
+		$text = preg_replace('/\[TOC\]/i', '',  $text);
 
 		$text = preg_replace('/(?<=\n\r|\n|\r|^)\{\|(.+?)(?:\n\r|\n|\r)(.+?)(?:\n\r|\n|\r)\|\}(?=\n\r|\n|\r|$)/se',
 		                     '$this->stripTableTags(\'\2\')',
