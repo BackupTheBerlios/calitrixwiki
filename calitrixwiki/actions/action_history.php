@@ -103,11 +103,7 @@ class action_history extends core
 	 * @return void
 	 **/
 	function opDiff()
-	{
-		if(!$this->hasPerms(PERM_DIFF)) {
-			$this->messageEnd('wiki_perm_denied');
-		}
-		
+	{	
 		$tpl = &singleton('template');
 		
 		if(isset($this->get['orig'], $this->get['final'])) {
