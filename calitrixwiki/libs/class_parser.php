@@ -236,6 +236,52 @@ class parser
 	}
 	
 	/**
+	 * Converts possible signature markers in the text
+	 * into signatures.
+	 *
+	 * @author Johannes Klose <exe@calitrix.de>
+	 * @param  array $text Page text to parse
+	 * @return string      Parsed text
+	 **/
+	function parseSignatures(&$text)
+	{
+		global $wiki;
+		
+		$text = preg_replace('/\[==(.+?)==\]/se',
+		                     '$this->stripNoParseSection(\'\1\')',
+		                     $text); // Strip sections which are marked to be ignored by the parser
+		$text = preg_replace('/@@@(.+?)@@@/se',
+		                     '$this->stripPreformated(\'\1\')',
+		                     $text);  // Strip sections which shall appear as entered in the form.
+		
+		if(!$wiki->loggedIn) {
+			$text = preg_replace('/~{3,5}/', '', $text);
+		} else {
+			$text = str_replace('~~~~~', $wiki->convertTime($wiki->time), $text);
+			$text = str_replace('~~~~',  '[['.$wiki->cfg['users_namespace'].':'.
+			                             $wiki->user['user_name'].' '.
+			                             $wiki->user['user_name'].']]'.' '.
+			                             $wiki->convertTime($wiki->time), $text);
+			$text = str_replace('~~~',   '[['.$wiki->cfg['users_namespace'].':'.
+			                             $wiki->user['user_name'].' '.
+			                             $wiki->user['user_name'].']]', $text);
+		}
+		
+		$text = trim($text);
+		
+		// Bring ignored sections back into the text
+		foreach($this->preformatedTexts as $rand => $string)
+		{
+			$text = str_replace('<PRE'.$rand.'>', '@@@'.$string.'@@@', $text);
+		}
+		
+		foreach($this->noParseSections as $rand => $string)
+		{
+			$text = str_replace('<NOPARSE'.$rand.'>', '[=='.$string.'==]', $text);
+		}
+	}
+	
+	/**
 	 * This function strips a text, which should be preformated, from the text
 	 * while other codes are parsed.
 	 *

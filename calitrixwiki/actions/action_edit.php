@@ -91,14 +91,14 @@ class action_edit extends core
 				if(isset($this->post['preview'])) {
 					$previewPage = $this->page;
 					$previewPage['page_text'] = $this->editText;
+					$parser->parseSignatures($previewText);
 					$previewText = $parser->parseText($previewPage);
-					$this->addSignature($previewText);
 					
 					$tpl->assign('isPreview',   true);
 					$tpl->assign('previewText', $previewText);
 					$tpl->assign('editText',    htmlentities($this->editText));
 				} else {
-					$this->addSignature($this->editText);
+					$parser->parseSignatures($this->editText);
 					
 					$this->savePageData($this->page['page_id'], $this->page['page_name'], $this->page['page_namespace'], 
 					                    $this->editText, $this->page['page_text'], $this->page['page_version'],
@@ -133,32 +133,6 @@ class action_edit extends core
 		}
 		
 		return true;
-	}
-	
-	/**
-	 * Converts possible signature markers in the text
-	 * into signatures.
-	 *
-	 * @author Johannes Klose <exe@calitrix.de>
-	 * @param  string &$text New page text
-	 * @return void
-	 **/
-	function addSignature(&$text)
-	{
-		if(!$this->loggedIn) {
-			$text = preg_replace('/--~{3,5}/', '', $text);
-		} else {
-			$text = str_replace('~~~~~', $this->convertTime($this->time), $text);
-			$text = str_replace('~~~~',  '[['.$this->cfg['users_namespace'].':'.
-			                             $this->user['user_name'].' '.
-			                             $this->user['user_name'].']]'.' '.
-			                             $this->convertTime($this->time), $text);
-			$text = str_replace('~~~',   '[['.$this->cfg['users_namespace'].':'.
-			                             $this->user['user_name'].' '.
-			                             $this->user['user_name'].']]', $text);
-		}
-		
-		$text = trim($text);
 	}
 	
 	/**
