@@ -23,16 +23,16 @@
 
 $cfg = array(
 /* Url and path settings */
-'url_root'          => 'http://localhost/calitrixwiki', // root url without trailing slashes
-'doc_root'          => '/var/www/calitrixwiki', // document root in the servers file system
-'url_format'        => 'http://localhost/calitrixwiki/cwiki.php?page=%s&action=%s', // usual url format
-'url_format_short'  => 'http://localhost/calitrixwiki/cwiki.php?page=%s', // short url format (used for internal hyperlinks
-'actions_dir'       => '/var/www/calitrixwiki/actions', // dir of the action handlers
-'lang_dir'          => '/var/www/calitrixwiki/lang', // dir where the language files are located
-'lib_dir'           => '/var/www/calitrixwiki/libs', // libraries directory
-'special_dir'       => '/var/www/calitrixwiki/specialpages', // special pages
-'plugins_dir'       => '/var/www/calitrixwiki/plugins', // plugins
-'themes_dir'        => '/var/www/calitrixwiki/themes', // themes
+'url_root'          => 'http://'.$_SERVER['HTTP_HOST'].dirname($_SERVER['PHP_SELF']), // root url without trailing slashes
+'doc_root'          => dirname($_SERVER['SCRIPT_FILENAME']), // document root in the servers file system
+'url_format'        => 'http://'.$_SERVER['HTTP_HOST'].dirname($_SERVER['PHP_SELF']).'/cwiki.php?page=%s&action=%s', // usual url format
+'url_format_short'  => 'http://'.$_SERVER['HTTP_HOST'].dirname($_SERVER['PHP_SELF']).'/cwiki.php?page=%s', // short url format (used for internal hyperlinks
+'actions_dir'       => dirname($_SERVER['SCRIPT_FILENAME']).'/actions', // dir of the action handlers
+'lang_dir'          => dirname($_SERVER['SCRIPT_FILENAME']).'/lang', // dir where the language files are located
+'lib_dir'           => dirname($_SERVER['SCRIPT_FILENAME']).'/libs', // libraries directory
+'special_dir'       => dirname($_SERVER['SCRIPT_FILENAME']).'/specialpages', // special pages
+'plugins_dir'       => dirname($_SERVER['SCRIPT_FILENAME']).'/plugins', // plugins
+'themes_dir'        => dirname($_SERVER['SCRIPT_FILENAME']).'/themes', // themes
 
 /* General settings */
 'wiki_title'        => 'CalitrixWiki', // The title of the wiki
