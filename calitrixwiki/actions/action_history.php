@@ -45,7 +45,7 @@ class action_history extends core
 		}
 		
 		$tpl = &singleton('template');
-		$this->pageVersions = $this->getVersions();
+		$this->pageVersions = diff::getVersions();
 		
 		if($this->page['page_id'] == 0) {
 			$this->HTTPRedirect($this->genUrl($this->getUniqueName($this->page)));
@@ -112,7 +112,7 @@ class action_history extends core
 			
 			if(!preg_match('/^\d+\.\d+\.\d+$/', $orig) || !preg_match('/^\d+\.\d+\.\d+$/', $final)) {
 				if(preg_match('/^\d+\.\d+\.\d+$/', $final)) {
-					$orig = $this->findPrevVersion($final);
+					$orig = diff::findPrevVersion($final, $this->pageVersions);
 					
 					if($orig === false) {
 						$this->opList();
@@ -129,103 +129,20 @@ class action_history extends core
 				return;
 			}
 			
-			$diff = $this->makeDiff($orig, $final);
+			$origText  = diff::createVersion($this->page['page_text'], $this->pageVersions, $orig);
+			$finalText = diff::createVersion($this->page['page_text'], $this->pageVersions, $final);
+			
+			$diff = diff::makeDiff($origText, $finalText, $this->pageVersions);
 			$tpl->assign('diff_orig',  $diff['orig']);
 			$tpl->assign('diff_final', $diff['final']);
 			$this->historyTemplate = 'action_history_diff.tpl';
 			
-			$this->lang['history_original'] = sprintf($this->lang['history_original'], $orig);
-			$this->lang['history_final']    = sprintf($this->lang['history_final'],    $final);
+			$this->lang['history_original'] = sprintf($this->lang['history_original'], $orig, $final, $this->pageVersions[$final]['log_time']);
+			$this->lang['history_final']    = sprintf($this->lang['history_final'],    $orig, $final, $this->pageVersions[$final]['log_time']);
 			return;
 		} else {
 			$this->opList();
 		}
-	}
-	
-	/**
-	 * Finds the previos version number of a version.
-	 *
-	 * @author Johannes Klose <exe@calitrix.de>
-	 * @param  string $version Version number from which the previos should be found
-	 * @return string          Previous version number
-	 */
-	function findPrevVersion($version)
-	{
-		$captureVersion = false;
-		
-		foreach($this->pageVersions as $key => $val)
-		{
-			if($captureVersion) {
-				return $key;
-			} elseif($key == $version) {
-				$captureVersion = true;
-			}
-		}
-		
-		return false;
-	}
-	
-	/**
-	 * Creates the array which contains two compared page versions
-	 *
-	 * @author Johannes Klose <exe@calitrix.de>
-	 * @param  string $orig  Original page version
-	 * @param  string $final Final page version
-	 * @return array         Page differences
-	 **/
-	function makeDiff($orig, $final)
-	{
-		$versions  = $this->pageVersions;
-		$origText  = $this->page['page_text'];
-		$finalText = $this->page['page_text'];
-		
-		$origText  = diff::createVersion($origText,  $versions, $orig);
-		$finalText = diff::createVersion($finalText, $versions, $final);
-		
-		$diff = diff::getDiff($finalText, $origText);
-		
-		$origLines  = explode("\n", $origText);
-		$finalLines = explode("\n", $finalText);
-		$lineCount  = count($origLines) > count($finalLines) ? count($origLines) : count($finalLines);
-		$origTextT  = array();
-		$finalTextT = array();
-		$ol         = 0;
-		$fl         = 0;
-		
-		for($i = 0; $i <= $lineCount; $i++)
-		{
-			if(isset($diff[$i])) {
-				$opType = $diff[$i][0];
-				$opVal  = isset($diff[$i][1]) ? $diff[$i][1] : '';
-				
-				if($opType == '~') {
-					$origTextT[]  = htmlentities($origLines[$ol]);
-					$finalTextT[] = array('type' => 'edit', 'line' => htmlentities($opVal));
-					$ol++;
-					$fl++;
-				} elseif($opType == '+') {
-					$origTextT[]  = '';
-					$finalTextT[] = array('type' => 'add', 'line' => htmlentities($opVal));
-					$fl++;
-				} else {
-					$origTextT[]  = htmlentities($origLines[$ol]);
-					$finalTextT[] = array('type' => 'subs', 'line' => htmlentities($origLines[$ol]));
-					$ol++;
-				}
-			} else {
-				if(isset($origLines[$ol])) {
-					$origTextT[] = $origLines[$ol];
-					$ol++;
-				}
-				
-				if(isset($finalLines[$fl])) {
-					$finalTextT[] = array('type' => 'none', 'line' => $finalLines[$fl]);
-					$fl++;
-				}
-			}
-		}
-		
-		return array('orig' => $origTextT, 'final' => $finalTextT);
 	}
 	
 	/**

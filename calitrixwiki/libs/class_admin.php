@@ -46,6 +46,7 @@ class admin extends core
 			$this->messageEnd('wiki_perm_denied');
 		}
 		
+		$this->lang = $this->getLang($this->langCode.'_admin');
 		$this->loadOrigConfig();
 	}
 	

@@ -104,7 +104,7 @@ class special_register extends core
 		} elseif(!preg_match('/^'.$this->cfg['title_format'].'$/', $this->cfg['users_namespace'].':'.$this->regUser)) {
 			$this->regErrors[] = $this->lang['register_invalid_username'];
 			$success = false;
-		} elseif(is_array($this->getUser($this->regUser))) {
+		} elseif(is_array($this->getUser($this->regUser, true))) {
 			$this->regErrors[] = $this->lang['register_username_taken'];
 			$success = false;
 		}

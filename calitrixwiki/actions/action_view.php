@@ -27,6 +27,8 @@
  **/
 class action_view extends core
 {
+	var $viewTemplate = 'action_view.tpl';
+	
 	/**
 	 * Start function
 	 *
@@ -81,6 +83,12 @@ class action_view extends core
 		// Now we check if there is some additional stuff to be done.
 		if($this->pageInfo['action'] == 'bookmark') {
 			$this->bookmarkPage();
+		} elseif($this->pageInfo['action'] == 'print') {
+			$this->viewTemplate = 'action_print.tpl';
+		}
+		
+		if(!headers_sent()) {
+			header('Content-Disposition: inline; filename='.$this->page['page_name'].'.html');
 		}
 	}
 	
@@ -124,7 +132,7 @@ class action_view extends core
 	 **/
 	function getTemplate()
 	{
-		return 'action_view.tpl';
+		return $this->viewTemplate;
 	}
 }
 ?>

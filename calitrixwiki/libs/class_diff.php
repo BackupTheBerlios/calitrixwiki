@@ -170,5 +170,120 @@ class diff
 		}
 		return $pageText;
 	}
+	
+	/**
+	 * Loads all versions of the current page from the database
+	 *
+	 * @author Johannes Klose <exe@calitrix.de>
+	 * @return array         Versions of the page
+	 **/
+	function getVersions()
+	{
+		$db     = &singleton('database');
+		
+		$versions = array();
+		$result   = $db->query('SELECT l.log_page_version, l.log_time, l.log_diff, '.
+		'l.log_user_id, l.log_user_name, l.log_summary, l.log_ip, u.user_name '.
+		'FROM '.DB_PREFIX.'changelog l LEFT JOIN '.DB_PREFIX.'users u ON u.user_id = l.log_user_id '.
+		'WHERE l.log_page_id = '.$this->page['page_id'].' '.
+		'ORDER BY log_time DESC');
+		
+		while($row = $db->fetch($result))
+		{
+			if($row['log_user_name'] != '' && $row['user_name'] == '') {
+				$row['user_name'] = $row['log_user_name'];
+			}
+			
+			$row['user_name']   = htmlentities($row['user_name']);
+			$row['log_summary'] = htmlentities($row['log_summary']);
+			$row['log_ip']      = htmlentities($row['log_ip']);
+			$row['log_time']    = $this->convertTime($row['log_time']);
+			$row['view_title']  = sprintf($this->lang['history_view'], $row['log_page_version']);
+			$versions[$row['log_page_version']] = $row;
+		}
+		
+		return $versions;
+	}
+	
+	/**
+	 * Creates the array which contains two compared page versions
+	 *
+	 * @author Johannes Klose <exe@calitrix.de>
+	 * @param  string $origText  Original page text
+	 * @param  string $finalText Final page text
+	 * @param  array  $versions  All page versions
+	 * @return array         Page differences
+	 **/
+	function makeDiff($origText, $finalText, &$versions)
+	{
+		$diff = diff::getDiff($finalText, $origText);
+		
+		$origLines  = explode("\n", $origText);
+		$finalLines = explode("\n", $finalText);
+		$lineCount  = count($origLines) > count($finalLines) ? count($origLines) : count($finalLines);
+		$origTextT  = array();
+		$finalTextT = array();
+		$ol         = 0;
+		$fl         = 0;
+		
+		for($i = 0; $i <= $lineCount; $i++)
+		{
+			if(isset($diff[$i])) {
+				$opType = $diff[$i][0];
+				$opVal  = isset($diff[$i][1]) ? $diff[$i][1] : '';
+				
+				if($opType == '~') {
+					$origTextT[]  = htmlentities($origLines[$ol]);
+					$finalTextT[] = array('type' => 'edit', 'line' => htmlentities($opVal));
+					$ol++;
+					$fl++;
+				} elseif($opType == '+') {
+					$origTextT[]  = '';
+					$finalTextT[] = array('type' => 'add', 'line' => htmlentities($opVal));
+					$fl++;
+				} else {
+					$origTextT[]  = htmlentities($origLines[$ol]);
+					$finalTextT[] = array('type' => 'subs', 'line' => htmlentities($origLines[$ol]));
+					$ol++;
+				}
+			} else {
+				if(isset($origLines[$ol])) {
+					$origTextT[] = $origLines[$ol];
+					$ol++;
+				}
+				
+				if(isset($finalLines[$fl])) {
+					$finalTextT[] = array('type' => 'none', 'line' => $finalLines[$fl]);
+					$fl++;
+				}
+			}
+		}
+		
+		return array('orig' => $origTextT, 'final' => $finalTextT);
+	}
+	
+	/**
+	 * Finds the previous version number of a version.
+	 *
+	 * @author Johannes Klose <exe@calitrix.de>
+	 * @param  string $version  Version number from which the previous should be found
+	 * @param  string $versions Versions array where the previous version should be found
+	 * @return string           Previous version number
+	 */
+	function findPrevVersion($version, &$versions)
+	{
+		$captureVersion = false;
+		
+		foreach($versions as $key => $val)
+		{
+			if($captureVersion) {
+				return $key;
+			} elseif($key == $version) {
+				$captureVersion = true;
+			}
+		}
+		
+		return false;
+	}
 }
 ?>

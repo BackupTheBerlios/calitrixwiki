@@ -177,7 +177,7 @@ class special_adminusers extends admin
 				} elseif(!preg_match('/^'.$this->cfg['title_format'].'$/', $this->cfg['users_namespace'].':'.$userName)) {
 					$errors[] = $this->lang['admin_user_invalid_name'];
 					$isError  = true;
-				} elseif(is_array($this->getUser($userName))) {
+				} elseif(is_array($this->getUser($userName, true))) {
 					$errors[] = $this->lang['admin_user_name_taken'];
 					$isError  = true;
 				}

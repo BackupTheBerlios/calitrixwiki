@@ -214,9 +214,67 @@ class core
 			}
 		}
 		
+		$this->setUserConfig();
+	}
+	
+	/**
+	 * Loads the data of a user from the database
+	 *
+	 * @author Johannes Klose <exe@calitrix.de>
+	 * @param  string $userId = ''    Id or name of the user
+	 * @param  bool   $isName = false Indicates wether $userId is a id or name
+	 * @return array                  User data
+	 **/
+	function getUser($userId = 0, $isName = false)
+	{
+		$db = &singleton('database');
+		
+		if($isName && $userId != '') {
+			$user = $db->queryRow('SELECT u.*, g.* FROM '.DB_PREFIX.'users u '.
+			'LEFT JOIN '.DB_PREFIX.'groups g ON g.group_id = u.user_group_id '.
+			'WHERE u.user_name = "'.addslashes($userId).'"');
+		} elseif(!$isName && $userId > 0) {
+			$user = $db->queryRow('SELECT u.*, g.* FROM '.DB_PREFIX.'users u '.
+			'LEFT JOIN '.DB_PREFIX.'groups g ON g.group_id = u.user_group_id '.
+			'WHERE u.user_id = '.((int)$userId));
+		} else {
+			$user = $db->queryRow('SELECT * FROM '.DB_PREFIX.'groups '.
+			'WHERE group_id = '.$this->cfg['default_guest_group']);
+		}
+		
+		return $user;
+	}
+	
+	/**
+	 * Updates the default config with the current users config settings.
+	 *
+	 * @author Johannes Klose <exe@calitrix.de>
+	 * @return void
+	 **/
+	function setUserConfig()
+	{
 		if($this->loggedIn) {
-			$this->user       = $this->getUser($this->session['session_user_name']);
-			$this->lang       = $this->getLang($this->langCode);
+			$this->user = $this->getUser($this->session['session_user_id']);
+			
+			if($this->user['user_language'] == '' || !isset($this->cfg['languages'][$this->user['user_language']])) {
+			$this->langCode = $this->cfg['default_lang'];
+			} else {
+				$this->langCode = $this->user['user_language'];
+			}
+			
+			$this->lang = $this->getLang($this->langCode);
+			
+			if($this->user['user_theme'] == '' || !isset($this->cfg['themes'][$this->user['user_theme']])) {
+				$this->theme = $this->cfg['default_theme'];
+			} else {
+				$this->theme = $this->user['user_theme'];
+			}
+			
+			if($this->user['user_items_pp'] > 0) {
+				$this->cfg['items_per_page'] = $this->user['user_items_pp'];
+			}
+			
+			$this->cfg['dblclick_editing'] = $this->user['user_dblclick_editing'];
 			
 			if($this->user['user_access_mask'] >= 0) {
 				$this->accessMask = (int)$this->user['group_access_mask'] | (int)$this->user['user_access_mask'];
@@ -224,60 +282,12 @@ class core
 				$this->accessMask = (int)$this->user['group_access_mask'];
 			}
 		} else {
+			$this->theme      = $this->cfg['default_theme'];
+			$this->langCode   = $this->cfg['default_lang'];
 			$this->user       = $this->getUser();
 			$this->lang       = $this->getLang($this->langCode);
 			$this->accessMask = (int)$this->user['group_access_mask'];
 		}
-	}
-	
-	/**
-	 * Loads the data of a user from the database
-	 *
-	 * @author Johannes Klose <exe@calitrix.de>
-	 * @param  string $username = '' User to load. If no username is given, only the guest group will be loaded
-	 * @return void
-	 **/
-	function getUser($username = '')
-	{
-		$db = &singleton('database');
-		
-		if($username != '') {
-			$user = $db->queryRow('SELECT u.*, g.* FROM '.DB_PREFIX.'users u '.
-			'LEFT JOIN '.DB_PREFIX.'groups g ON g.group_id = u.user_group_id '.
-			'WHERE u.user_name = "'.addslashes($username).'"');
-		} else {
-			$user = $db->queryRow('SELECT * FROM '.DB_PREFIX.'groups '.
-			'WHERE group_id = '.$this->cfg['default_guest_group']);
-		}
-		
-		if($username == '') {
-			$this->theme     = $this->cfg['default_theme'];
-			$this->langCode  = $this->cfg['default_lang'];
-			return $user;
-		}
-		
-		/**
-		 * Merge the default config with the users config settings
-		 **/
-		if($user['user_language'] == '' || !isset($this->cfg['languages'][$user['user_language']])) {
-			$this->langCode = $this->cfg['default_lang'];
-		} else {
-			$this->langCode = $user['user_language'];
-		}
-		
-		if($user['user_theme'] == '' || !isset($this->cfg['themes'][$user['user_theme']])) {
-			$this->theme = $this->cfg['default_theme'];
-		} else {
-			$this->theme = $user['user_theme'];
-		}
-		
-		if($user['user_items_pp'] > 0) {
-			$this->cfg['items_per_page'] = $user['user_items_pp'];
-		}
-		
-		$this->cfg['dblclick_editing'] = $user['user_dblclick_editing'];
-		
-		return $user;
 	}
 	
 	/**
@@ -429,44 +439,10 @@ class core
 		
 		if(file_exists($fileName)) {
 			include $fileName;
-			return $lang;
+			return array_merge($this->lang, $lang);
 		} else {
 			trigger_error('Unable to load language file \''.$file.'\'', E_USER_ERROR);
 		}
-	}
-	
-	/**
-	 * Loads all versions of the current page from the database
-	 *
-	 * @author Johannes Klose <exe@calitrix.de>
-	 * @return array         Versions of the page
-	 **/
-	function getVersions()
-	{
-		$db     = &singleton('database');
-		
-		$versions = array();
-		$result   = $db->query('SELECT l.log_page_version, l.log_time, l.log_diff, '.
-		'l.log_user_id, l.log_user_name, l.log_summary, l.log_ip, u.user_name '.
-		'FROM '.DB_PREFIX.'changelog l LEFT JOIN '.DB_PREFIX.'users u ON u.user_id = l.log_user_id '.
-		'WHERE l.log_page_id = '.$this->page['page_id'].' '.
-		'ORDER BY log_time DESC');
-		
-		while($row = $db->fetch($result))
-		{
-			if($row['log_user_name'] != '' && $row['user_name'] == '') {
-				$row['user_name'] = $row['log_user_name'];
-			}
-			
-			$row['user_name']   = htmlentities($row['user_name']);
-			$row['log_summary'] = htmlentities($row['log_summary']);
-			$row['log_ip']      = htmlentities($row['log_ip']);
-			$row['log_time']    = $this->convertTime($row['log_time']);
-			$row['view_title']  = sprintf($this->lang['history_view'], $row['log_page_version']);
-			$versions[$row['log_page_version']] = $row;
-		}
-		
-		return $versions;
 	}
 	
 	/**
@@ -537,6 +513,7 @@ class core
 		}
 		
 		if($xhtmlCompat) {
+			//$url = preg_replace('/&(?!((#[0-9]+)|(#[xX][0-9a-fA-F]+)|([a-zA-Z]+));)/', '&amp;', $url);
 			$url = htmlentities($url);
 		}
 		
@@ -674,126 +651,6 @@ class core
 	}
 	
 	/**
-	 * Creates a changelog and version information
-	 * for a edited page.
-	 *
-	 * @author Johannes Klose <exe@calitrix.de>
-	 * @param  int    $pageId   The page id
-	 * @param  string $oldText  Old page text
-	 * @param  string $newText  New page text
-	 * @param  string $version  Old page version
-	 * @param  int    $userId   The authors id (if logged in)
-	 * @param  string $userName The authors name (if it is an unregistered author)
-	 * @param  string $summary  Summary of changes
-	 * @return string           New page version
-	 **/
-	function logChanges($pageId, $oldText, $newText, $version, $userId, $userName, $summary)
-	{
-		$db   = &singleton('database');
-		
-		$pageVersion = $version;
-		$linesOld    = explode("\n", $newText);
-		
-		$diff = diff::getDiff($oldText, $newText);
-			
-		if(count($diff) > 0) {
-			$oldLineCount     = count($linesOld);
-			$changedLineCount = count($diff);
-			
-			$percentSteps   = $oldLineCount / 100;
-			$percentChanged = $changedLineCount / $percentSteps;
-			
-			if($version != '') {
-				$pageVersion = explode('.', $version);
-			} else {
-				$pageVersion = array(0, 0, 0);
-			}
-			
-			if($percentChanged <= 5 || count($diff) <= 5) {
-				$pageVersion[2]++;
-			} elseif($percentChanged <= 25) {
-				$pageVersion[1]++;
-				$pageVersion[2] = 0;
-			} else {
-				$pageVersion[0]++;
-				$pageVersion[1] = 0;
-				$pageVersion[2] = 0;
-			}
-			
-			$pageVersion = join('.', $pageVersion);
-			
-			$db->query('INSERT INTO '.DB_PREFIX.'changelog(log_page_id, '.
-			'log_page_version, log_time, log_diff, log_user_id, log_user_name, '.
-			'log_summary, log_ip) '.
-			'VALUES('.$pageId.', \''.$pageVersion.'\', '.$this->time.', '.
-			'\''.addslashes(serialize($diff)).'\', '.$userId.', '.
-			'\''.addslashes($userName).'\', \''.addslashes($summary).'\', '.
-			'\''.addslashes($this->server['REMOTE_ADDR']).'\')');
-		}
-		
-		return $pageVersion;
-	}
-	
-	/**
-	 * Saves a page to the database
-	 *
-	 * @author Johannes Klose <exe@calitrix.de>
-	 * @param  int    $pageId        The page id
-	 * @param  string $pageName      Current page name
-	 * @param  string $namespace     The pages namespace
-	 * @param  string $newText       New page text
-	 * @param  string $oldText       The old page text
-	 * @param  string $version       Old page version
-	 * @param  int    $userId = 0    The authors id (if logged in)
-	 * @param  string $userName = '' The authors name (if it is an unregistered author)
-	 * @param  string $summary = ''  Summary of changes
-	 * @return void
-	 **/
-	function savePageData($pageId, $pageName, $namespace, $newText, $oldText, $version, $userId = 0, $userName = '', $summary = '')
-	{
-		$db = &singleton('database');
-		
-		if($pageId > 0) {
-			$pageVersion = $this->logChanges($pageId, $oldText, $newText, $version, $userId, $userName, $summary);
-			
-			$db->query('UPDATE '.DB_PREFIX.'pages '.
-			'SET page_name = \''.addslashes($pageName).'\', '.
-			'page_last_change = '.$this->time.', '.
-			'page_version = \''.$pageVersion.'\' '.
-			'WHERE page_id = '.$pageId);
-			
-			$pageCache = '';
-			
-			$db->query('UPDATE '.DB_PREFIX.'page_texts '.
-			'SET page_text = \''.addslashes($newText).'\', '.
-			'page_cache = \''.addslashes($pageCache).'\' '.
-			'WHERE page_id = '.$pageId);
-		} else {
-			$db->query('INSERT INTO '.DB_PREFIX.'pages(page_namespace, page_name, '.
-			'page_time, page_last_change, page_version) '.
-			'VALUES(\''.addslashes($namespace).'\', \''.addslashes($pageName).'\', '.
-			$this->time.', '.$this->time.', \'1.0.0\')');
-			
-			$page_id   = $db->insertId();
-			$pageCache = '';
-			
-			
-			$db->query('INSERT INTO '.DB_PREFIX.'page_texts(page_id, page_text, page_cache) '.
-			'VALUES('.$page_id.', \''.addslashes($newText).'\', \''.addslashes($pageCache).'\')');
-			
-			$db->query('INSERT INTO '.DB_PREFIX.'changelog(log_page_id, '.
-			'log_page_version, log_time, log_diff, log_user_id, log_user_name, '.
-			'log_summary, log_ip) '.
-			'VALUES('.$page_id.', \'1.0.0\', '.$this->time.', '.
-			'\''.serialize(array()).'\', '.$userId.', '.
-			'\''.addslashes($userName).'\', \''.addslashes($summary).'\', '.
-			'\''.addslashes($this->server['REMOTE_ADDR']).'\')');
-		}
-		
-		return true;
-	}
-	
-	/**
 	 * Assigns the default template variables.
 	 *
 	 * @author Johannes Klose <exe@calitrix.de>
@@ -814,7 +671,8 @@ class core
 		$tpl->assign('pageName',      $this->getUniqueName($this->page));
 		$tpl->assign('pageNameOnly',  $this->page['page_name']);
 		$tpl->assign('pageNamespace', $this->page['page_namespace']);
-		$tpl->assign('pageAction',    $this->pageAction);
+		$tpl->assign('pageAction',    $this->pageInfo['action']);
+		$tpl->assign('actionTitle',   $this->pageAction);
 		
 		if($this->pageTitle == '') {
 			$tpl->assign('pageTitle', $this->getUniqueName($this->page));

@@ -37,7 +37,23 @@ class parser
 	var $existingPages    = array();
 	var $linkedPages      = array();
 	
-	function escapeText($text) { return htmlentities($text); }
+	/** 
+	 * Constructor; inits some variables.
+	 * 
+	 * @author Johannes Klose <exe@calitrix.de>
+	 * @return void
+	 **/
+	function parser()
+	{
+		global $wiki;
+		
+		$thispage                   = $wiki->cfg['thispage_interwiki'];
+		$thiswiki                   = $wiki->cfg['thiswiki_interwiki'];
+		$this->interWiki            = $wiki->cfg['interwiki'];
+		$this->interWiki[$thiswiki] = $wiki->cfg['url_format_short'];
+		$this->interWiki[$thispage] = '';
+	}
+	 
 	/**
 	 * Creates the this->userVars array.
 	 *
@@ -48,9 +64,6 @@ class parser
 	function createUserVars(&$page)
 	{
 		global $wiki;
-		
-		$thispage = $wiki->cfg['thispage_interwiki'];
-		$thiswiki = $wiki->cfg['thiswiki_interwiki'];
 		
 		$this->userVars['WikiTitle']        = $wiki->cfg['wiki_title'];
 		$this->userVars['PageName']         = $page['page_name'];
@@ -67,9 +80,7 @@ class parser
 		$this->userVars['CurrentDate']      = date('d.m.y',     $wiki->time);
 		$this->userVars['CurrentTime']      = date('H:i',       $wiki->time);
 		$this->userVars['CurrentDateTime']  = date('d.m.y H:i', $wiki->time);
-		
-		$this->interWiki                    = $wiki->cfg['interwiki'];
-		$this->interWiki[$thiswiki]         = $wiki->cfg['url_format_short'];
+		$thispage                           = $wiki->cfg['thispage_interwiki'];
 		$this->interWiki[$thispage]         = $wiki->genUrl($page['page_name']).'%s';
 	}
 	
@@ -106,21 +117,19 @@ class parser
 			}
 		}
 		
-		// Doesn't look like we are redirected. So, lets parse wiki style class definitions, paragraphs and linebreaks.
+		$text = preg_split('/(\r\n\r\n|\n\n|\r\r)/', $text);
+		$text = "<p>\n".join("\n</p>\n<p>\n", $text)."\n</p>";
+		
 		$text = preg_replace('/%define=([A-Za-z0-9_-]+) ((([a-z-]+):(.+?);?)+)%(\n\r|\n|\r)?/se',
 		                     '$this->defineWikiStyle(\'\1\', \'\2\')',
 		                     $text); // Extract wiki style classes ...
-		$text = preg_replace('/((\r\n){2,}|(\n){2,}|(\r){2,})/',
-		                     "\n".$wiki->cfg['html_paragraph']."\n",
-		                     $text);  // Paragraphs ...
-		$text = preg_replace('/\\\(?=\n\r|\n|\r|$)/',
-		                     $wiki->cfg['html_newline'],
-		                     $text);  // Explizit line breaks ...
 		
 		// Now let us rush through the basic markups. Headings, emphasis, ...
 		$text = preg_replace('/^(={2,4})(.+?)(\1)($|\n\r|\n|\r)/me',
 		                     '$this->createHeading(\'\1\', \'\2\')',
 		                     $text);  // Headings
+		
+		$text = preg_replace('/(%%%|&lt;br( \/)?&gt;)/',              '<br />',                              $text);  // Explizit line breaks ...
 		$text = preg_replace('/^----+/m',                             '<hr />',                              $text);  // Horizontal ruler
 		$text = preg_replace('/^-&gt;&lt;-(.+?)$/m',                  '<div class="wiki-centered">\1</div>', $text);  // Centered text
 		$text = preg_replace('/^-&gt;(.+?)$/m',                       '<div class="wiki-right">\1</div>',    $text);  // Right-aligned text
@@ -134,8 +143,8 @@ class parser
 		$text = preg_replace('/(?<=\s)([A-Za-z.-]+)\((.*?)\)(?=\s)/', '<acronym title="\2">\1</acronym>',    $text);  // Acronyms
 		
 		// Before we start with links we must parse image tags.
-		$text = preg_replace('/\[\[(([a-z]+)\:\/\/[a-zA-Z0-9\-\.]+([\S]*)(\.(gif|jpg|jpeg|png|bmp|tiff)))'.
-		                     '( (\d+)?,(\d+)?)?( (left|right|none))?( ?(.+?))?\]\]/e',
+		$text = preg_replace('/\[\[(([a-z]+)\:\/\/[a-zA-Z0-9\-\.]+([\S]*?)(\.(gif|jpg|jpeg|png|bmp|tiff)))'.
+		                     '( (\d+)?,(\d+)?)?( (left|right|none))?( (.+?))?\]\]/e',
 		                     '$this->doImage(\'\1\', \'\7\', \'\8\', \'\10\', \'\12\')',
 		                     $text); // Parse images
 		
@@ -144,7 +153,7 @@ class parser
 		                     '<a href="\1" class="wiki-external">\1</a>',
 		                     $text); // Parse urls
 		$text = preg_replace('/\[\[(([a-z]+)\:\/\/[a-zA-Z0-9\-\.]+([\S]*))\]\]/',
-		                     '<a href="\1" class="wiki-external>\1</a>',
+		                     '<a href="\1" class="wiki-external">\1</a>',
 		                     $text); // Parse urls
 		$text = preg_replace('/\[\[(([a-z]+)\:\/\/[a-zA-Z0-9\-\.]+([\S]*)) (.+?)\]\]/',
 		                     '<a href="\1" class="wiki-external">\4</a>',
@@ -167,8 +176,8 @@ class parser
 		// Now lets start with interwiki links and internal hyperlinking.
 		$this->parseInterWikiLinks($text);
 		
-		$text = preg_replace('/\[\['.$wiki->cfg['title_format'].'( .+?)?\]\]([a-z]+)?/e',
-		                     '$this->makeWikiLink(\'\2\', \'\3\', \'\4\', \'\1\')',
+		$text = preg_replace('/\[\['.$wiki->cfg['title_format'].'(#.+?)?(&gt;[A-Za-z0-9_-]+)?( .+?)?\]\]([a-z]+)?/e',
+		                     '$this->makeWikiLink(\'\2\', \'\5\', \'\6\', \'\1\', \'\3\', \'\4\')',
 		                     $text); // Internal links with the double-bracket syntax
 		
 		if($wiki->cfg['auto_link'] == 1) {
@@ -437,11 +446,12 @@ class parser
 	{
 		global $wiki;
 		
-		$depth = strlen($depth) - 1;
+		$depth  = strlen($depth) - 1;
+		$anchor = preg_replace('/[^\w\s]/', '', $text);
 		$this->headings[] = array($depth, $text);
 		
 		return sprintf($wiki->cfg['code_snippets']['heading'],
-		               preg_replace('/\s/', '_', $text), $depth, $text);
+		               preg_replace('/\s/', '_', $anchor), $depth, $text);
 	}
 	
 	/**
@@ -561,8 +571,8 @@ class parser
 		{
 			$text = preg_replace('/(?<=\s|^)('.preg_quote($wiki, '/').'):([^\s]+)(?=\s|$)/e',
 			                     '$this->makeInterWikiLink(\'\1\', \'\2\', \'\')', $text);
-			$text = preg_replace('/\[\[('.preg_quote($wiki, '/').'):([^\s]+)( (.+?))?\]\]/e',
-			                     '$this->makeInterWikiLink(\'\1\', \'\2\', \'\4\')', $text);
+			$text = preg_replace('/\[\[('.preg_quote($wiki, '/').'):(.+?)(#.+?)?(&gt;[A-Za-z0-9_-]+)?( (.+?))?\]\]/e',
+			                     '$this->makeInterWikiLink(\'\1\', \'\2\', \'\5\', \'\3\', \'\4\')', $text);
 		}
 	}
 	
@@ -575,13 +585,13 @@ class parser
 	 * @param  string $desc      Link description
 	 * @return string            HTML-code
 	 **/
-	function makeInterWikiLink($interwiki, $page, $desc)
+	function makeInterWikiLink($interwiki, $page, $desc, $anchor = '', $target = '')
 	{
 		global $wiki;
 		
 		$page = $page;
 		$desc = $desc;
-		$url  = sprintf($this->interWiki[$interwiki], $page);
+		$url  = sprintf($this->interWiki[$interwiki], $page).$anchor;
 		
 		if($interwiki == $wiki->cfg['thispage_interwiki'] || $interwiki == $wiki->cfg['thiswiki_interwiki']) {
 			$codeSnippet = $wiki->cfg['code_snippets']['link_internal'];
@@ -589,10 +599,14 @@ class parser
 			$codeSnippet = $wiki->cfg['code_snippets']['link_interwiki'];
 		}
 		
+		if($target != '') {
+			$target = ' target="'.$target.'"';
+		}
+		
 		if($desc == '') {
-			$link = sprintf($codeSnippet, $url, $interwiki.':'.$page);
+			$link = sprintf($codeSnippet, $url, $interwiki.':'.$page, $target);
 		} else {
-			$link = sprintf($codeSnippet, $url, $desc);
+			$link = sprintf($codeSnippet, $url, $desc, $target);
 		}
 		
 		return $link;
@@ -610,10 +624,10 @@ class parser
 	{
 		global $wiki;
 		
-		$db   = &singleton('database');
+		$db = &singleton('database');
 		
 		preg_match_all('/'.$wiki->cfg['title_format_search'].'/', $text, $matches1);
-		preg_match_all('/\[\['.$wiki->cfg['title_format'].'( .+?)?\]\]([a-z]+)?/', $text, $matches2);
+		preg_match_all('/\[\['.$wiki->cfg['title_format'].'(#.+?)?(&gt;[A-Za-z0-9_-]+)?( .+?)?\]\]([a-z]+)?/', $text, $matches2);
 		
 		$namespaces = array();
 		
@@ -725,7 +739,7 @@ class parser
 	 * @param  string $namespace = ''   Namespace of the page
 	 * @return string                   Parsed text
 	 **/
-	function makeWikiLink($page, $description = '', $ending = '', $namespace = '')
+	function makeWikiLink($page, $description = '', $ending = '', $namespace = '', $anchor = '', $target = '')
 	{
 		global $wiki;
 		
@@ -746,7 +760,7 @@ class parser
 		if(!isset($this->existingPages[$namespace][$page]) && $namespace != $wiki->cfg['special_namespace']) {
 			$linkURL  = $wiki->genUrl($wiki->getUniqueName($pageData), 'edit');
 		} else {
-			$linkURL  = $wiki->genUrl($wiki->getUniqueName($pageData));
+			$linkURL  = $wiki->genUrl($wiki->getUniqueName($pageData)).$anchor;
 		}
 		
 		if($namespace != $wiki->cfg['default_namespace'] && $wiki->cfg['display_namespaces']) {
@@ -761,10 +775,14 @@ class parser
 			$linkText .= $ending;
 		}
 		
+		if($target != '') {
+			$target = ' target="'.$target.'"';
+		}
+		
 		if(isset($this->existingPages[$namespace][$page]) || $namespace == $wiki->cfg['special_namespace']) {
-			$link = sprintf($wiki->cfg['code_snippets']['link_internal'], $linkURL, $linkText);
+			$link = sprintf($wiki->cfg['code_snippets']['link_internal'], $linkURL, $linkText, $target);
 		} else {
-			$link = sprintf($wiki->cfg['code_snippets']['link_create'], $linkURL, $linkText);
+			$link = sprintf($wiki->cfg['code_snippets']['link_create'], $linkURL, $linkText, $target);
 		}
 		
 		return $link;
@@ -897,7 +915,7 @@ class parser
 			$cols++;
 		}
 		
-		$htmlTable = '<table'.$attributes.' cellspacing="0" cellpadding="2" border="0">'."\n";
+		$htmlTable = '<table'.$attributes.' class="wiki-table">'."\n";
 		
 		foreach($table as $cells)
 		{
@@ -938,6 +956,12 @@ class parser
 					$htmlAttribs .= ' colspan="'.intval($match[2][$i]).'"';
 				} elseif($match[1][$i] == 'rowspan') {
 					$htmlAttribs .= ' rowspan="'.intval($match[2][$i]).'"';
+				} elseif($match[1][$i] == 'spacing') {
+					$htmlAttribs .= ' cellspacing="'.intval($match[2][$i]).'"';
+				} elseif($match[1][$i] == 'padding') {
+					$htmlAttribs .= ' cellpadding="'.intval($match[2][$i]).'"';
+				} elseif($match[1][$i] == 'border') {
+					$htmlAttribs .= ' border="'.intval($match[2][$i]).'"';
 				}
 			}
 		}
@@ -1101,7 +1125,7 @@ class parser
 		                     $text);  // Strip sections which shall appear as entered in the form.
 		
 		$text = preg_replace('/\[REDIRECT '.$wiki->cfg['title_format'].'\]/', '', $text);
-		
+		$text = preg_replace('/(%%%|&lt;br( \/)?&gt;)/',                            '',   $text);
 		$text = preg_replace('/%define=([A-Za-z0-9_-]+) ((([a-z-]+):(.+?);?)+)%/s', '',   $text);
 		$text = preg_replace('/\\\(?=\n\r|\n|\r|$)/',                               '',   $text);
 		$text = preg_replace('/^(={2,4})(.+?)(\1)($|\n\r|\n|\r)/m',                 '\2', $text);
@@ -1115,15 +1139,11 @@ class parser
 		$text = preg_replace('/^([:]+)(.+?)$/m',                                    '\2', $text);
 		$text = preg_replace('/\[\$([A-Za-z0-9]+)\]/',                              '',   $text);
 		
-		$text = preg_replace('/\[\[(([a-z]+)\:\/\/[a-zA-Z0-9\-\.]+([\S]*)(\.(gif|jpg|jpeg|png|bmp|tiff)))'.
-		                     '( (\d+)?,(\d+)?)?( (left|right|none))?( ?(.+?))?\]\]/', '\1', $text);
-		
-		$text = preg_replace('/(?<=\s|^)(([a-z]+)\:\/\/[a-zA-Z0-9\-\.]+([\S]*))/',      '\1', $text);
-		$text = preg_replace('/\[\[(([a-z]+)\:\/\/[a-zA-Z0-9\-\.]+([\S]*))\]\]/',       '\1', $text);
-		$text = preg_replace('/\[\[(([a-z]+)\:\/\/[a-zA-Z0-9\-\.]+([\S]*)) (.+?)\]\]/', '\4', $text);
-		$text = preg_replace('/(?<=\s|^)([a-zA-Z0-9._\-]+@[a-zA-Z0-9\.\-]+)(?=\s|$)/',  '\1', $text);
-		$text = preg_replace('/\[\[([a-zA-Z0?9._\-]+@[a-zA-Z0?9\.\-]+)\]\]/',           '\1', $text);
-		$text = preg_replace('/\[\[([a-zA-Z0?9._\-]+@[a-zA-Z0?9\.\-]+) (.+?)\]\]/',     '\2', $text);
+		$text = preg_replace('/\[\[(([a-z]+)\:\/\/[a-zA-Z0-9\-\.]+([\S]*?)(\.(gif|jpg|jpeg|png|bmp|tiff)))( .+?)?\]\]/', '', $text);
+		$text = preg_replace('/\[\[(([a-z]+)\:\/\/[a-zA-Z0-9\-\.]+([\S]*?))\]\]/',       '\1',  $text);
+		$text = preg_replace('/\[\[(([a-z]+)\:\/\/[a-zA-Z0-9\-\.]+([\S]*?)) (.+?)\]\]/', '\4',  $text);
+		$text = preg_replace('/\[\[([a-zA-Z0?9._\-]+@[a-zA-Z0?9\.\-]+)\]\]/',           '\1',  $text);
+		$text = preg_replace('/\[\[([a-zA-Z0?9._\-]+@[a-zA-Z0?9\.\-]+) (.+?)\]\]/',     '\2',  $text);
 		
 		$this->stripInterWikiLinks($text);
 		
@@ -1135,6 +1155,8 @@ class parser
 		$text = preg_replace('/(?<=\n\r|\n|\r|^)\{\|(.+?)(?:\n\r|\n|\r)(.+?)(?:\n\r|\n|\r)\|\}(?=\n\r|\n|\r|$)/se',
 		                     '$this->stripTableTags(\'\2\')',
 		                     $text);
+		$text = preg_replace('/&lt;&lt;'.$wiki->cfg['title_format'].'&gt;&gt;/',
+		                     '\1\2', $text);
 		
 		while(preg_match('/%[A-Za-z0-9_-]+%.+?%%/s', $text))
 		{
@@ -1149,7 +1171,7 @@ class parser
 		// Bring ignored sections back into the text
 		foreach($this->preformatedTexts as $rand => $string)
 		{
-			$text = str_replace('<PRE'.$rand.'>', '<pre>'.$string.'</pre>', $text);
+			$text = str_replace('<PRE'.$rand.'>', $string, $text);
 		}
 		
 		foreach($this->noParseSections as $rand => $string)
@@ -1169,10 +1191,29 @@ class parser
 	 **/
 	function stripInterWikiLinks(&$text)
 	{
-		foreach($this->interWiki as $wiki => $wikiURL)
+		global $wiki;
+		
+		foreach($this->interWiki as $interwiki => $wikiURL)
 		{
-			$text = preg_replace('/\[\[('.preg_quote($wiki, '/').'):([^\s]+)( (.+?))?\]\]/e',
-			                     '\1:\2', $text);
+			$text = preg_replace('/\[\[('.preg_quote($interwiki, '/').'):(.+?)(#.+?)?(&gt;[A-Za-z0-9_-]+)?( (.+?))?\]\]/e',
+			                     '$this->stripInterWikiLink(\'\1:\2\', \'\6\')', $text);
+		}
+	}
+	
+	/**
+	 * This function strips InterWiki link tags.
+	 *
+	 * @author Johannes Klose <exe@calitrix.de>
+	 * @param  string $interWiki The InterWiki name and target page
+	 * @param  string $desc      Possible link description
+	 * @return string            InterWiki without tags
+	 **/
+	function stripInterWikiLink($interWiki, $desc)
+	{
+		if($desc == '') {
+			return stripslashes($interWiki);
+		} else {
+			return stripslashes($desc);
 		}
 	}
 	

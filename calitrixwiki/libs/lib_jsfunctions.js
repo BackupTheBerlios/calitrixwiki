@@ -79,3 +79,29 @@ function testWikiStyle()
 	
 	nw.document.write("\">" + document.editstyle.style_name.value + "</span>\n</body>\n</html>");
 }
+
+//
+// Code for switching a style sheet
+//
+var xfelement = new Array()	
+
+function xfFetchElement(id)
+{
+	if(xfelement[id]) {
+		return xfelement[id]
+	}
+	
+	if (document.getElementById) {
+		xfelement[id] = document.getElementById(id)
+	} else if (document.all) {
+		xfelement[id] = document.all[id]
+	} else if (document.layers) {
+		xfelement[id] = document.layers[id]
+	}
+	
+	return xfelement[id]
+}
+
+function switchCSS(newCSS) {
+	xfFetchElement('cssswitch').href = newCSS;
+}

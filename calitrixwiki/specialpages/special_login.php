@@ -53,7 +53,7 @@ class special_login extends core
 				$tpl->assign('loginMsg', $this->lang['login_invalid']);
 			}
 			
-			$result = $db->query('SELECT u.*, g.* FROM '.DB_PREFIX.'users u '.
+			$result = $db->query('SELECT user_id, user_name, user_password, user_use_cookies FROM '.DB_PREFIX.'users u '.
 			'LEFT JOIN '.DB_PREFIX.'groups g ON g.group_id = u.user_group_id '.
 			'WHERE u.user_name = \''.addslashes($username).'\' AND u.user_password = \''.sha1($password).'\'');
 			
@@ -73,8 +73,8 @@ class special_login extends core
 					$this->createSession($row['user_id'], $row['user_name'], $useCookies);
 				}
 				
-				$this->user     = $row;
 				$this->loggedIn = true;
+				$this->setUserConfig();
 				$tpl->assign('loginMsg', $this->lang['login_success']);
 			} else {
 				$tpl->assign('loginMsg', $this->lang['login_invalid']);
