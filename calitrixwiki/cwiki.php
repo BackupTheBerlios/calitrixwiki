@@ -58,8 +58,8 @@ include $cfg['lib_dir'].'/class_core.php';
 include $cfg['lib_dir'].'/lib_instances.php';
 include $cfg['lib_dir'].'/class_diff.php';
 
-$page   = isset($_GET['page'])   ? $_GET['page']               : $cfg['default_page'];
-$action = isset($_GET['action']) ? strtolower($_GET['action']) : $cfg['default_action'];
+$page   = isset($_GET['page']) && $_GET['page'] != '' ? $_GET['page']               : $cfg['default_page'];
+$action = isset($_GET['action'])                      ? strtolower($_GET['action']) : $cfg['default_action'];
 
 // Extract the namespace:WikiPage components from the page parameter.
 // If the page parameter doesnt match, page name and namespace are set to false.
