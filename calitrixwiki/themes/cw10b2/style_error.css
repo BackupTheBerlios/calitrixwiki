@@ -1,0 +1,36 @@
+body {
+	margin:0px;
+	padding:0px;
+	background: #9a9a9a;
+	font-family:Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size:84%;
+	line-height:145%;
+	color:#353535;
+}
+
+a {
+	color:#1e4b76;
+}
+
+a:hover {
+	text-decoration:none;
+}
+
+#message-end {
+	padding:4px;
+	width:500px;
+	margin:250px auto;
+	background-color:#ffffff;
+	border:1px #aaaaaa solid;
+}
+
+#message-end h1 {
+	margin:0px;
+	padding:0px;
+	margin-bottom:10px;
+	margin-top:5px;
+	font-size:1.6em;
+	color: #00375e;
+	font-weight:bold;
+	border-bottom: 1px #dedede solid;
+}
