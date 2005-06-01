@@ -66,17 +66,6 @@ class action_view extends core
 		
 		$page['page_text'] = $parser->parseText($page);
 		
-		// If the client was redirected to this page we create
-		// a backlink to the edit form of the referring page.
-		if(isset($this->get['redirect'])) {
-			if(preg_match('/^((([A-Z][a-z0-9_]+)+)+)$/', $this->get['redirect'])) {
-				$url   = sprintf($this->cfg['url_format'], $this->get['redirect'], 'edit');
-				$link  = '<a href="'.$url.'" class="wiki-internal">'.$this->get['redirect'].'</a>';
-				$alert = sprintf($this->lang['wiki_redirected'], $link);
-				$page['page_text'] = '<span class="light-grey">'.$alert.'</span><br /><br />'.$page['page_text'];
-			}
-		}
-		
 		$tpl->assign('pageText',  $page['page_text']);
 		$tpl->assign('isMessage', false);
 		

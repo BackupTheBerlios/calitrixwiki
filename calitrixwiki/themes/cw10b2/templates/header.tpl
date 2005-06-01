@@ -48,3 +48,4 @@
  </div>
  <div id="content"{if $cfg.dblclick_editing == 1 && $pageNamespace != $cfg.special_namespace} onDblClick="document.location.href='{wikiurl page="`$pageNameUnique`" action="edit"}'"{/if}>
     <h1 class="page-title">{$pageTitle}{if $actionTitle != ''} - {$actionTitle}{/if}</h1>
+    {$rBackLink}

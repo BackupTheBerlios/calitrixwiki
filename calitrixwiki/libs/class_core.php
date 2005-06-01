@@ -710,6 +710,20 @@ class core
 		$tpl->assign('canUseAcp',   $this->hasPerms(PERM_USEACP));
 		$tpl->assign('canDelete',   $this->hasPerms(PERM_DELETE));
 		$tpl->assign('canRename',   $this->hasPerms(PERM_RENAME));
+		
+		/**
+		 * If the user was redirected to this page, a backlink to the
+		 * source of the redirect needs to be generated.
+		 **/
+		if(isset($this->get['redirect']) && preg_match('/^((([A-Z][a-z0-9_]+)+)+)$/', $this->get['redirect'])) {
+			$url   = sprintf($this->cfg['url_format'], $this->get['redirect'], 'edit');
+			$link  = '<a href="'.$url.'" class="wiki-internal">'.$this->get['redirect'].'</a>';
+			$alert = sprintf($this->lang['wiki_redirected'], $link);
+			
+			$tpl->assign('rBackLink', '<span class="light-grey">'.$alert.'</span><br />');
+		} else {
+			$tpl->assign('rBackLink', '');
+		}
 	}
 	
 	/**
@@ -722,7 +736,7 @@ class core
 	 * @return array navigation
 	 **/
 	function makePages($row_count, $rows_per_page, $url)
-	{      
+	{
 		$num_pages = ceil(($row_count == 0 ? 1 : $row_count) / $rows_per_page);
 		$page      = isset($this->get['p']) && is_numeric($this->get['p']) ? $this->get['p'] : 1;
 		$page      = $page > $num_pages ? 1 : $page;
