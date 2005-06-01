@@ -120,12 +120,12 @@ class parser
 		$text = preg_split('/(\r\n\r\n|\n\n|\r\r)/', $text);
 		$text = "<p>\n".join("\n</p>\n<p>\n", $text)."\n</p>";
 		
-		$text = preg_replace('/%define=([A-Za-z0-9_-]+) ((([a-z-]+):(.+?);?)+)%(\n\r|\n|\r)?/se',
+		$text = preg_replace('/%define=([A-Za-z0-9_-]+) ((([a-z-]+):(.+?);?)+)%(\r\n|\n|\r)?/se',
 		                     '$this->defineWikiStyle(\'\1\', \'\2\')',
 		                     $text); // Extract wiki style classes ...
 		
 		// Now let us rush through the basic markups. Headings, emphasis, ...
-		$text = preg_replace('/^(={2,4})(.+?)(\1)($|\n\r|\n|\r)/me',
+		$text = preg_replace('/^(={2,4})(.+?)(\1)($|\r\n|\n|\r)/me',
 		                     '$this->createHeading(\'\1\', \'\2\')',
 		                     $text);  // Headings
 		
@@ -197,7 +197,7 @@ class parser
 		$text = preg_replace('/((^(\*|#)+ (.*?)(\n|$))+)/me',
 		                     '$this->parseList(\'\1\')',
 		                     $text); // Parse lists
-		$text = preg_replace('/(?<=\n\r|\n|\r|^)\{\|(.+?)(?:\n\r|\n|\r)(.+?)(?:\n\r|\n|\r)\|\}(?=\n\r|\n|\r|$)/se',
+		$text = preg_replace('/(?<=\r\n|\n|\r|^)\{\|(.+?)(?:\r\n|\n|\r)(.+?)(?:\r\n|\n|\r)\|\}(?=\r\n|\n|\r|$)/se',
 		                     '$this->parseTable(\'\2\', \'\1\')',
 		                     $text);
 		$text = preg_replace('/&lt;&lt;'.$wiki->cfg['title_format'].'&gt;&gt;/e',
@@ -1222,8 +1222,8 @@ class parser
 		$text = preg_replace('/\[REDIRECT '.$wiki->cfg['title_format'].'\]/', '', $text);
 		$text = preg_replace('/(%%%|&lt;br( \/)?&gt;)/',                            '',   $text);
 		$text = preg_replace('/%define=([A-Za-z0-9_-]+) ((([a-z-]+):(.+?);?)+)%/s', '',   $text);
-		$text = preg_replace('/\\\(?=\n\r|\n|\r|$)/',                               '',   $text);
-		$text = preg_replace('/^(={2,4})(.+?)(\1)($|\n\r|\n|\r)/m',                 '\2', $text);
+		$text = preg_replace('/\\\(?=\r\n|\n|\r|$)/',                               '',   $text);
+		$text = preg_replace('/^(={2,4})(.+?)(\1)($|\r\n|\n|\r)/m',                 '\2', $text);
 		$text = preg_replace('/^----+/m',                                           '',   $text);
 		$text = preg_replace('/^-&gt;&lt;-(.+?)$/m',                                '\1', $text);
 		$text = preg_replace('/^-&gt;(.+?)$/m',                                     '\1', $text);
@@ -1247,7 +1247,7 @@ class parser
 		
 		$text = preg_replace('/\[TOC\]/i', '',  $text);
 
-		$text = preg_replace('/(?<=\n\r|\n|\r|^)\{\|(.+?)(?:\n\r|\n|\r)(.+?)(?:\n\r|\n|\r)\|\}(?=\n\r|\n|\r|$)/se',
+		$text = preg_replace('/(?<=\r\n|\n|\r|^)\{\|(.+?)(?:\r\n|\n|\r)(.+?)(?:\r\n|\n|\r)\|\}(?=\r\n|\n|\r|$)/se',
 		                     '$this->stripTableTags(\'\2\')',
 		                     $text);
 		$text = preg_replace('/&lt;&lt;'.$wiki->cfg['title_format'].'&gt;&gt;/',
