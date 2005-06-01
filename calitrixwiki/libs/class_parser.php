@@ -125,7 +125,7 @@ class parser
 		                     $text); // Extract wiki style classes ...
 		
 		// Now let us rush through the basic markups. Headings, emphasis, ...
-		$text = preg_replace('/^(={2,4})(.+?)(\1)($|\r\n|\n|\r)/me',
+		$text = preg_replace('/^(={2,4})(.+?)(\1)(?=$|\r\n|\n|\r)/me',
 		                     '$this->createHeading(\'\1\', \'\2\')',
 		                     $text);  // Headings
 		
@@ -194,7 +194,7 @@ class parser
 		$text = preg_replace('/\[TOC\]/ie', 
 		                     '$this->createToc()', 
 		                     $text); // Table of contents ...
-		$text = preg_replace('/((^(\*|#)+ (.*?)(\n|$))+)/me',
+		$text = preg_replace('/((^(\*|#)+ (.*?)(\r\n|\n|\r|$))+)/me',
 		                     '$this->parseList(\'\1\')',
 		                     $text); // Parse lists
 		$text = preg_replace('/(?<=\r\n|\n|\r|^)\{\|(.+?)(?:\r\n|\n|\r)(.+?)(?:\r\n|\n|\r)\|\}(?=\r\n|\n|\r|$)/se',
