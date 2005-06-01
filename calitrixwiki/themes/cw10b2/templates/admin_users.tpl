@@ -16,7 +16,7 @@
  <tr>
   <td class="td-first">{$cfgUser.user_id}</td>
   <td class="td-cell">
-   <a href="{wikiurl page="`$cfg.users_namespace`:`$cfgUser.user_name`"}">{$cfgUser.user_name}</a>
+   <a href="{wikiurl page="`$cfg.users_namespace`:`$cfgUser.user_name_raw`"}">{$cfgUser.user_name}</a>
   </td>
   <td class="td-cell">{$cfgUser.user_email}</td>
   <td class="td-cell">

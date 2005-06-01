@@ -40,7 +40,7 @@ class special_users extends core
 		$result  = $db->query('SELECT COUNT(*) AS count FROM '.DB_PREFIX.'users');
 		$row     = $db->fetch($result);
 		$count   = $row['count'];
-		$pageUrl = $this->genUrl($this->getUniqueName($this->page), '', array('user' => '%s'));
+		$pageUrl = $this->genUrl($this->getUniqueName($this->page), '', array('p' => '%s'), true, true);
 		$pages   = $this->makePages($count, $this->cfg['items_per_page'], $pageUrl);
 		
 		$this->lang['wiki_pages'] = sprintf($this->lang['wiki_pages'], $pages[4], $pages[3]);
@@ -58,6 +58,7 @@ class special_users extends core
 		while($row = $db->fetch($result))
 		{
 			$row['user_reg_time'] = $this->convertTime($row['user_reg_time']);
+			$row['user_name_raw'] = $row['user_name'];
 			$row['user_name']     = htmlentities($row['user_name']);
 			$users[]              = $row;
 		}

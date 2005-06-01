@@ -194,10 +194,6 @@ class diff
 				$row['user_name'] = $row['log_user_name'];
 			}
 			
-			$row['user_name']   = htmlentities($row['user_name']);
-			$row['log_summary'] = htmlentities($row['log_summary']);
-			$row['log_ip']      = htmlentities($row['log_ip']);
-			$row['log_time']    = $this->convertTime($row['log_time']);
 			$row['view_title']  = sprintf($this->lang['history_view'], $row['log_page_version']);
 			$versions[$row['log_page_version']] = $row;
 		}

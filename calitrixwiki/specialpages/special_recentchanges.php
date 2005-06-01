@@ -40,7 +40,7 @@ class special_recentchanges extends core
 		$result  = $db->query('SELECT COUNT(*) AS count FROM '.DB_PREFIX.'changelog');
 		$row     = $db->fetch($result);
 		$count   = $row['count'];
-		$pageUrl = $this->genUrl($this->getUniqueName($this->page), '', array('p' => '%s'));
+		$pageUrl = $this->genUrl($this->getUniqueName($this->page), '', array('p' => '%s'), true, true);
 		$pages   = $this->makePages($count, $this->cfg['items_per_page'], $pageUrl);
 		
 		$this->lang['wiki_pages'] = sprintf($this->lang['wiki_pages'], $pages[4], $pages[3]);
@@ -65,15 +65,17 @@ class special_recentchanges extends core
 				$row['user_name'] = $row['log_user_name'];
 			}
 			
-			$row['page_name']   = $this->getUniqueName($row);
-			$row['user_name']   = htmlentities($row['user_name']);
-			$row['log_summary'] = htmlentities($row['log_summary']);
-			$row['log_time']    = $this->convertTime($row['log_time']);
-			$row['page_url']    = $this->genUrl($row['page_name']);
-			$row['diff_url']    = $this->genUrl($row['page_name'], 'history',
-			                      array('o' => 'diff', 'orig' => '0', 'final' => $row['log_page_version']));
-			$row['history_url'] = $this->genUrl($row['page_name'], 'history');
-			$changes[]          = $row;
+			$row['page_name_raw'] = $this->getUniqueName($row);
+			$row['page_name']     = htmlentities(str_replace('_', ' ', $this->getUniqueName($row)));
+			$row['user_name_raw'] = $row['user_name'];
+			$row['user_name']     = htmlentities(str_replace('_', ' ', $row['user_name']));
+			$row['log_summary']   = htmlentities($row['log_summary']);
+			$row['log_time']      = $this->convertTime($row['log_time']);
+			$row['page_url']      = $this->genUrl($row['page_name']);
+			$row['diff_url']      = $this->genUrl($row['page_name'], 'history',
+			                        array('o' => 'diff', 'orig' => '0', 'final' => $row['log_page_version']));
+			$row['history_url']   = $this->genUrl($row['page_name'], 'history');
+			$changes[]            = $row;
 		}
 		
 		$tpl->assign('changes', $changes);

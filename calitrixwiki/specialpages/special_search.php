@@ -61,11 +61,11 @@ class special_search extends core
 		
 		while($row = $db->fetch($result))
 		{
-			$row['page_text']  = $parser->stripCodes($row['page_text']);
-			$row['page_text']  = substr($row['page_text'], 0, $this->cfg['teaser_length']).'...';
-			$row['page_name']  = $this->getUniqueName($row);
-			$row['page_title'] = $row['page_name'];
-			//$row['page_text']  = $this->summarizeText($row['page_text'], $query, '<span class="highlight">%s</span>', $this->cfg['teaser_length']);
+			$row['page_text']      = $parser->stripCodes($row['page_text']);
+			$row['page_text']      = substr($row['page_text'], 0, $this->cfg['teaser_length']).'...';
+			$row['page_name_raw']  = $this->getUniqueName($row);
+			$row['page_name']      = htmlentities(str_replace('_', ' ', $this->getUniqueName($row)));
+			//$row['page_text']    = $this->summarizeText($row['page_text'], $query, '<span class="highlight">%s</span>', $this->cfg['teaser_length']);
 			
 			$pages[] = $row;
 		}
@@ -156,7 +156,7 @@ class special_search extends core
 		$row     = $db->fetch($result);
 		$count   = $row['count'];
 		$query   = str_replace('%', '%%', urlencode($query));
-		$pageUrl = $this->genUrl($this->getUniqueName($this->page), '', array('q' => $query, 'sw' => $sw, 'p' => '%s'));
+		$pageUrl = $this->genUrl($this->getUniqueName($this->page), '', array('q' => $query, 'sw' => $sw, 'p' => '%s'), true, true);
 		$pages   = $this->makePages($count, $this->cfg['items_per_page'], $pageUrl);
 		
 		$this->lang['wiki_pages'] = sprintf($this->lang['wiki_pages'], $pages[4], $pages[3]);

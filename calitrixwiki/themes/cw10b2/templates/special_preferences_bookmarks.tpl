@@ -28,8 +28,8 @@
  {section name="idx" loop="$bookmarks"}
  <tr>
   <td class="td-first">
-   {if $bookmarks[idx].mark_new}<img src="{$urlRoot}/themes/cwiki/images/new.gif" alt="" />&nbsp;&nbsp;{/if}
-   <a href="{wikiurl page="`$bookmarks[idx].page_name`"}" class="wiki-internal">{$bookmarks[idx].page_name}</a></td>
+   {if $bookmarks[idx].mark_new}<img src="{$urlRoot}/themes/cw10b2/images/new.gif" alt="" />&nbsp;&nbsp;{/if}
+   <a href="{wikiurl page="`$bookmarks[idx].page_name_raw`"}" class="wiki-internal">{$bookmarks[idx].page_name}</a></td>
   <td class="td-cell">{$bookmarks[idx].page_version}</td>
   <td class="td-cell">{$bookmarks[idx].page_last_change}</td>
   <td class="td-last"><input type="checkbox" name="pid[]" value="{$bookmarks[idx].page_id}" />
@@ -54,6 +54,6 @@
 &nbsp;<input type="submit" value="{$lang.prefs_bookmarks_change_submit}" />
 </form>
 
-<p><img src="{$urlRoot}/themes/cwiki/images/new.gif" alt="" />&nbsp;&nbsp;{$lang.prefs_bookmarks_info}</p>
+<p><img src="{$urlRoot}/themes/cw10b2/images/new.gif" alt="" />&nbsp;&nbsp;{$lang.prefs_bookmarks_info}</p>
 
 {include file="footer.tpl"}

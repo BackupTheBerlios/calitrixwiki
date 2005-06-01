@@ -96,7 +96,7 @@ class action_edit extends core
 	}
 	
 	/**
-	 * This function prepares a page for saving. If generates a preview
+	 * This function prepares a page for saving. It generates a preview
 	 * if requested and checks edit conflicts before saving the page.
 	 *
 	 * @author Johannes Klose <exe@calitrix.de>

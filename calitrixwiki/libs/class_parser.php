@@ -140,7 +140,7 @@ class parser
 		$text = preg_replace('/@@(.+?)@@/s',                          '<tt>\1</tt>',                         $text);  // Monospace text
 		$text = preg_replace('/^([:]+)(.+?)$/me',                     '$this->indentText(\'\1\', \'\2\')',   $text);  // Indented text
 		$text = preg_replace('/\[\$([A-Za-z0-9]+)\]/e',               '$this->replaceUserVar(\'\1\')',       $text);  // Replace user vars in the text
-		$text = preg_replace('/(?<=\s)([A-Za-z.-]+)\((.*?)\)/', '<acronym title="\2">\1</acronym>',    $text);  // Acronyms
+		$text = preg_replace('/(?<=\s)([A-Za-z.-]+)\((.*?)\)/',       '<acronym title="\2">\1</acronym>',    $text);  // Acronyms
 		
 		// Before we start with links we must parse image tags.
 		$text = preg_replace('/\[\[(([a-z]+)\:\/\/[a-zA-Z0-9\-\.]+([\S]*?)(\.(gif|jpg|jpeg|png|bmp|tiff)))'.
@@ -176,8 +176,12 @@ class parser
 		// Now lets start with interwiki links and internal hyperlinking.
 		$this->parseInterWikiLinks($text);
 		
-		$text = preg_replace('/\[\['.$wiki->cfg['title_format'].'(#.+?)?(&gt;[A-Za-z0-9_-]+)?( .+?)?\]\]([a-z]+)?/e',
-		                     '$this->makeWikiLink(\'\2\', \'\5\', \'\6\', \'\1\', \'\3\', \'\4\')',
+		$text = preg_replace('/\[\[([^|]+?)(#[^|]+)?\|(.*?)\]\]([a-z]+)?/e',
+		                     '$this->makeFreeLink(\'\1\', \'\3\', \'\2\', \'\4\')',
+		                     $text); // Internal links with free-link syntax
+		
+		$text = preg_replace('/\[\['.$wiki->cfg['title_format'].'(#.+?)?( .+?)?\]\]([a-z]+)?/e',
+		                     '$this->makeWikiLink(\'\2\', \'\4\', \'\5\', \'\1\', \'\3\')',
 		                     $text); // Internal links with the double-bracket syntax
 		
 		if($wiki->cfg['auto_link'] == 1) {
@@ -239,6 +243,9 @@ class parser
 		{
 			$text = str_replace('<NOPARSE'.$rand.'>', $string, $text);
 		}
+		
+		$this->noParseSections = array();
+		$this->preformatedTexts = array();
 		
 		// Last step: replace special characters like the german umlauts
 		// with their html entities. 
@@ -303,6 +310,9 @@ class parser
 		{
 			$text = str_replace('<NOPARSE'.$rand.'>', '[=='.$string.'==]', $text);
 		}
+		
+		$this->noParseSections = array();
+		$this->preformatedTexts = array();
 	}
 	
 	/**
@@ -547,7 +557,7 @@ class parser
 		}
 		
 		if($alt != '') {
-			$image .= ' alt="'.trim($alt).'"';
+			$image .= ' alt="'.trim($alt).'" title="'.trim($alt).'"';
 		}
 		
 		if($float != '') {
@@ -563,7 +573,13 @@ class parser
 		
 		$image .= ' />';
 		
-		return sprintf($wiki->cfg['code_snippets']['image'], $image, $alt, $width, $height, $float);
+		$image = sprintf($wiki->cfg['code_snippets']['image'], $image, $alt, $width, $height, $float);
+		
+		if(preg_match('/^((([a-z]+)\:\/\/[a-zA-Z0-9\-\.]+([\S]*))|([a-zA-Z0-9._\-]+@[a-zA-Z0-9\.\-]+))$/', trim($alt))) {
+			return sprintf($wiki->cfg['code_snippets']['link_external'], $alt, $image);
+		} else {
+			return $image;
+		}
 	}
 	
 	/**
@@ -636,14 +652,34 @@ class parser
 		
 		preg_match_all('/'.$wiki->cfg['title_format_search'].'/', $text, $matches1);
 		preg_match_all('/\[\['.$wiki->cfg['title_format'].'(#.+?)?(&gt;[A-Za-z0-9_-]+)?( .+?)?\]\]([a-z]+)?/', $text, $matches2);
+		preg_match_all('/\[\[([^|]+?)(#[^|]+)?\|(.*?)\]\]([a-z]+)?/e', $text, $matches3);
 		
 		$namespaces = array();
 		
-		$matches1 = array_slice($matches1, 1, 2);
-		$matches1 = array('namespaces' => $matches1[0], 'names' => $matches1[1]);
-		$matches2 = array_slice($matches2, 1, 2);
-		$matches2 = array('namespaces' => $matches2[0], 'names' => $matches2[1]);
-		$pages    = array_merge_recursive($matches1, $matches2);
+		$matches1    = array_slice($matches1, 1, 2);
+		$matches1    = array('namespaces' => $matches1[0], 'names' => $matches1[1]);
+		$matches2    = array_slice($matches2, 1, 2);
+		$matches2    = array('namespaces' => $matches2[0], 'names' => $matches2[1]);
+		$matches3tmp = array('namespaces' => array(), 'names' => array());
+		
+		for($i = 0; $i < count($matches3[1]); $i++)
+		{
+			$page = $matches3[1][$i];
+			
+			if(strstr($page, ':') !== false) {
+				$page = explode(':', $page);
+				$namespace = $page[0];
+				unset($page[0]);
+				$page = join($page);
+			} else {
+				$namespace = '';
+			}
+			
+			$matches3tmp['namespaces'][] = $namespace;
+			$matches3tmp['names'][]      = str_replace(' ', '_', $page);
+		}
+		
+		$pages = array_merge_recursive($matches1, $matches2, $matches3tmp);
 		
 		for($i = 0; $i < count($pages['names']); $i++) {
 			$namespace = substr($pages['namespaces'][$i], 0, strlen($pages['namespaces'][$i]) - 1);
@@ -691,7 +727,7 @@ class parser
 					$existing[$row['page_namespace']] = array();
 				}
 				
-				$existing[$row['page_namespace']][$row['page_name']] = 1;
+				$existing[$row['page_namespace']][strtolower($row['page_name'])] = 1;
 			}
 		}
 		
@@ -738,6 +774,40 @@ class parser
 	}
 	
 	/**
+	 * This function prepares a FreeLink for the makeWikiLink function.
+	 *
+	 * @author Johannes Klose <exe@calitrix.de>
+	 * @param string $page   Page name
+	 * @param string $anchor Anchor in target page
+	 * @param string $desc   Link description
+	 **/
+	function makeFreeLink($page, $desc, $anchor, $ending)
+	{
+		global $wiki;
+		
+		if(strstr($page, ':') !== false) {
+			$page = explode(':', $page);
+			$namespace = $page[0].':';
+			unset($page[0]);
+			$page = join($page);
+		} else {
+			$namespace = '';
+		}
+		
+		if($desc == '') {
+			if($namespace != '' && $namespace != $wiki->cfg['default_namespace'] && $wiki->cfg['display_namespaces']) {
+				$desc = $namespace.$page;
+			} else {
+				$desc = $page;
+			}
+		}
+		
+		$page = str_replace(' ', '_', $page);
+		
+		return $this->makeWikiLink($page, $desc, $ending, $namespace, $anchor);
+	}
+	
+	/**
 	 * This function generates the html-code for a internal link.
 	 *
 	 * @author Johannes Klose <exe@calitrix.de>
@@ -747,7 +817,7 @@ class parser
 	 * @param  string $namespace = ''   Namespace of the page
 	 * @return string                   Parsed text
 	 **/
-	function makeWikiLink($page, $description = '', $ending = '', $namespace = '', $anchor = '', $target = '')
+	function makeWikiLink($page, $description = '', $ending = '', $namespace = '', $anchor = '')
 	{
 		global $wiki;
 		
@@ -765,7 +835,7 @@ class parser
 			$linkText = $page;
 		}
 		
-		if(!isset($this->existingPages[$namespace][$page]) && $namespace != $wiki->cfg['special_namespace']) {
+		if(!isset($this->existingPages[$namespace][strtolower($page)]) && $namespace != $wiki->cfg['special_namespace']) {
 			$linkURL  = $wiki->genUrl($wiki->getUniqueName($pageData), 'edit');
 		} else {
 			$linkURL  = $wiki->genUrl($wiki->getUniqueName($pageData)).$anchor;
@@ -783,14 +853,10 @@ class parser
 			$linkText .= $ending;
 		}
 		
-		if($target != '') {
-			$target = ' target="'.$target.'"';
-		}
-		
-		if(isset($this->existingPages[$namespace][$page]) || $namespace == $wiki->cfg['special_namespace']) {
-			$link = sprintf($wiki->cfg['code_snippets']['link_internal'], $linkURL, $linkText, $target);
+		if(isset($this->existingPages[$namespace][strtolower($page)]) || $namespace == $wiki->cfg['special_namespace']) {
+			$link = sprintf($wiki->cfg['code_snippets']['link_internal'], $linkURL, $linkText);
 		} else {
-			$link = sprintf($wiki->cfg['code_snippets']['link_create'], $linkURL, $linkText, $target);
+			$link = sprintf($wiki->cfg['code_snippets']['link_create'], $linkURL, $linkText);
 		}
 		
 		return $link;

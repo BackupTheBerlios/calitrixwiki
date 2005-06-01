@@ -3,7 +3,7 @@
 {include file="form_errors.tpl"}
 {include file="inline_message.tpl"}
 
-<form method="post" action="{wikiurl page="`$pageName`" action="edit"}">
+<form method="post" action="{wikiurl page="`$pageNameUnique`" action="edit"}">
 <input type="hidden" name="edit_start" value="{$editStart}" />
 <textarea name="page_text" rows="30" cols="60">{$editText}</textarea>
 {if $allowSubmit}<br /><br />

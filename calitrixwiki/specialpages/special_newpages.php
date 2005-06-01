@@ -40,7 +40,7 @@ class special_newpages extends core
 		$result  = $db->query('SELECT COUNT(*) AS count FROM '.DB_PREFIX.'pages');
 		$row     = $db->fetch($result);
 		$count   = $row['count'];
-		$pageUrl = $this->genUrl($this->getUniqueName($this->page), '', array('p' => '%s'));
+		$pageUrl = $this->genUrl($this->getUniqueName($this->page), '', array('p' => '%s'), true, true);
 		$pages   = $this->makePages($count, $this->cfg['items_per_page'], $pageUrl);
 		
 		$this->lang['wiki_pages'] = sprintf($this->lang['wiki_pages'], $pages[4], $pages[3]);
@@ -57,9 +57,10 @@ class special_newpages extends core
 		
 		while($row = $db->fetch($result))
 		{
-			$row['page_time'] = $this->convertTime($row['page_time']);
-			$row['page_name'] = $this->getUniqueName($row);
-			$newPages[]       = $row;
+			$row['page_time']     = $this->convertTime($row['page_time']);
+			$row['page_name_raw'] = $this->getUniqueName($row);
+			$row['page_name']     = htmlentities(str_replace('_', ' ', $this->getUniqueName($row)));
+			$newPages[]           = $row;
 		}
 		
 		$tpl->assign('newPages', $newPages);

@@ -46,5 +46,5 @@
    <li><a href="{wikiurl page="`$cfg.special_namespace`:Register"}" class="wiki-internal">{$lang.wiki_register}</a></li>
   </ul>{/if}
  </div>
- <div id="content"{if $cfg.dblclick_editing == 1 && $pageNamespace != $cfg.special_namespace} onDblClick="document.location.href='{wikiurl page="`$pageName`" action="edit"}'"{/if}>
+ <div id="content"{if $cfg.dblclick_editing == 1 && $pageNamespace != $cfg.special_namespace} onDblClick="document.location.href='{wikiurl page="`$pageNameUnique`" action="edit"}'"{/if}>
     <h1 class="page-title">{$pageTitle}{if $actionTitle != ''} - {$actionTitle}{/if}</h1>

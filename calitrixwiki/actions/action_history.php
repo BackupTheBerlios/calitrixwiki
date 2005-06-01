@@ -80,7 +80,7 @@ class action_history extends core
 		'FROM '.DB_PREFIX.'changelog '.
 		'WHERE log_page_id = '.$this->page['page_id']);
 		$count   = $row['count'];
-		$pageUrl = $this->genUrl($this->getUniqueName($this->page), 'history', array('p' => '%s'));
+		$pageUrl = $this->genUrl($this->getUniqueName($this->page), 'history', array('p' => '%s'), true, true);
 		$pages   = $this->makePages($count, $this->cfg['items_per_page'], $pageUrl);
 		
 		$this->lang['wiki_pages'] = sprintf($this->lang['wiki_pages'], $pages[4], $pages[3]);
@@ -91,7 +91,18 @@ class action_history extends core
 		$tpl->assign('firstPage', sprintf($pageUrl, 1));
 		$tpl->assign('lastPage',  sprintf($pageUrl, $pages[3]));
 		
-		$tpl->assign('versions', array_slice($this->pageVersions, $pages[1], $pages[2]));
+		$versions = array_slice($this->pageVersions, $pages[1], $pages[2]);
+		
+		foreach($versions as $key => $val)
+		{
+			$versions[$key]['user_name_raw'] = $versions[$key]['user_name'];
+			$versions[$key]['user_name']     = htmlentities($versions[$key]['user_name']);
+			$versions[$key]['log_summary']   = htmlentities($versions[$key]['log_summary']);
+			$versions[$key]['log_ip']        = htmlentities($versions[$key]['log_ip']);
+			$versions[$key]['log_time']      = $this->convertTime($versions[$key]['log_time']);
+		}
+		
+		$tpl->assign('versions', $versions);
 		$this->historyTemplate = 'action_history.tpl';
 		return;
 	}

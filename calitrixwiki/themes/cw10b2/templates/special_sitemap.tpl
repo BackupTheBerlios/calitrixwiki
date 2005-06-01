@@ -12,7 +12,7 @@
 <a name="{$char}"></a><h1>{$char}</h1>
 <ul class="siteMap">
 {section name="idx" loop="$pages"}
-<li><a href="{wikiurl page="`$pages[idx]`"}" class="wiki-internal">{$pages[idx]}</a></li>
+<li><a href="{wikiurl page="`$pages[idx].raw`"}" class="wiki-internal">{$pages[idx].name}</a></li>
 {/section}
 </ul>
 {/foreach}

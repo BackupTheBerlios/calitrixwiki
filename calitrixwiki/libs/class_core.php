@@ -477,8 +477,15 @@ class core
 	 * @param  bool   $xhtmlCompat = true Sets wether urls shall be xhtml compatible
 	 * @return string                     Url
 	 **/
-	function genUrl($pageName, $action = '', $params = array(), $xhtmlCompat = true)
+	function genUrl($pageName, $action = '', $params = array(), $xhtmlCompat = true, $sprintfCompat = false)
 	{
+		$pageName = urlencode($pageName);
+		$pageName = str_replace('%2F', '/', $pageName);
+		
+		if($sprintfCompat) {
+			$pageName = str_replace('%', '%%', $pageName);
+		}
+		
 		if($action == '') {
 			$url = sprintf($this->cfg['url_format_short'], $pageName);
 		} else {
@@ -492,11 +499,11 @@ class core
 			$hide_session = false;
 		}
 		
-		if($xhtmlCompat) {
+		/*if($xhtmlCompat) {
 			$seperator = '&amp;';
 		} else {
 			$seperator = '&';
-		}
+		}*/
 		
 		if(count($params) > 0) {
 			$url     .= strpos($url, '?') !== false ? '&' : '?';
@@ -507,15 +514,19 @@ class core
 				$nparams[] = $key.'='.$val;
 			}
 			
-			$url .= join($seperator, $nparams);
+			$url .= join('&', $nparams);
 		}
 		
 		if($this->loggedIn && $this->sid != '' && !$hide_session) {
 			if(strpos($url, '?') !== false) {
-				$url .= $seperator.$this->sid;
+				$url .= '&'.$this->sid;
 			} else {
 				$url .= '?'.$this->sid;
 			}
+		}
+		
+		if($xhtmlCompat) {
+			$url = htmlentities($url);
 		}
 		
 		return $url;
@@ -665,24 +676,24 @@ class core
 	function assignTplVars()
 	{
 		$tpl = &singleton('template') ;
-		$tpl->assign('lang',          $this->lang);
-		$tpl->assign('cfg',           $this->cfg);
-		$tpl->assign('urlRoot',       $this->cfg['url_root']);
-		$tpl->assign('pageId',        $this->page['page_id']);
-		$tpl->assign('lastModified',  $this->convertTime($this->page['page_last_change']));
-		$tpl->assign('pageVersion',   $this->page['page_version']);
-		$tpl->assign('wikiTitle',     $this->cfg['wiki_title']);
-		$tpl->assign('loggedIn',      $this->loggedIn);
-		$tpl->assign('user',          $this->user);
-		$tpl->assign('pageName',      $this->getUniqueName($this->page));
-		$tpl->assign('pageNameOnly',  $this->page['page_name']);
-		$tpl->assign('pageNamespace', $this->page['page_namespace']);
-		$tpl->assign('pageAction',    $this->pageInfo['action']);
-		$tpl->assign('actionTitle',   $this->pageAction);
-		$tpl->assign('wikiVersion',   $this->cfg['wiki_version']);
+		$tpl->assign('lang',           $this->lang);
+		$tpl->assign('cfg',            $this->cfg);
+		$tpl->assign('urlRoot',        $this->cfg['url_root']);
+		$tpl->assign('pageId',         $this->page['page_id']);
+		$tpl->assign('lastModified',   $this->convertTime($this->page['page_last_change']));
+		$tpl->assign('pageVersion',    $this->page['page_version']);
+		$tpl->assign('wikiTitle',      $this->cfg['wiki_title']);
+		$tpl->assign('loggedIn',       $this->loggedIn);
+		$tpl->assign('user',           $this->user);
+		$tpl->assign('pageName',       $this->page['page_name']);
+		$tpl->assign('pageNameUnique', $this->getUniqueName($this->page));
+		$tpl->assign('pageNamespace',  $this->page['page_namespace']);
+		$tpl->assign('pageAction',     $this->pageInfo['action']);
+		$tpl->assign('actionTitle',    $this->pageAction);
+		$tpl->assign('wikiVersion',    $this->cfg['wiki_version']);
 		
 		if($this->pageTitle == '') {
-			$tpl->assign('pageTitle', $this->getUniqueName($this->page));
+			$tpl->assign('pageTitle', str_replace('_', ' ', $this->getUniqueName($this->page)));
 		} else {
 			$tpl->assign('pageTitle', $this->pageTitle);
 		}

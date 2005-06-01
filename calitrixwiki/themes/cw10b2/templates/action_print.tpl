@@ -10,9 +10,9 @@
 <h1 class="page-title">{$pageTitle}{if $actionTitle != ''} - {$actionTitle}{/if}</h1>
 {$pageText}
 <hr />
-{wikiurl page="`$pageName`" hide_session=""}{if $pageId > 0}<br />
+{wikiurl page="`$pageNameUnique`" hide_session=""}{if $pageId > 0}<br />
 {$lang.last_modified}: {$lastModified} {$lang.page_version} {$pageVersion}{/if}
 <br /><br />
-<a href="{wikiurl page="`$pageName`"}">{$lang.wiki_back}</a>
+<a href="{wikiurl page="`$pageNameUnique`"}">{$lang.wiki_back}</a>
 </body>
 </html>

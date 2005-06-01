@@ -50,7 +50,7 @@ class action_view extends core
 		
 		// If the user wants to view an old version we check
 		// if he has the right to do so and display the old text.
-		if(isset($this->get['v']) && preg_match('/^\d+\.\d+\.\d+$/', $this->get['v'])) {
+		if(isset($this->get['v']) && preg_match('/^\d+\.\d+\.\d+$/', $this->get['v']) && $this->get['v'] != $page['page_version']) {
 			if(!$this->hasPerms(PERM_HISTORY)) {
 				$this->messageEnd('wiki_perm_denied');
 			}

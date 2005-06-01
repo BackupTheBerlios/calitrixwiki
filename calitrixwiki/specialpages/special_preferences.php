@@ -286,7 +286,7 @@ class special_preferences extends core
 		$row     = $db->queryRow('SELECT COUNT(*) AS count FROM '.DB_PREFIX.'bookmarks '.
 		'WHERE bm_user_id = '.$this->user['user_id']);
 		$count   = $row['count'];
-		$pageUrl = $this->genUrl($this->getUniqueName($this->page), '', array('op' => 'bookmarks', 'p' => '%s'));
+		$pageUrl = $this->genUrl($this->getUniqueName($this->page), '', array('op' => 'bookmarks', 'p' => '%s'), true, true);
 		$pages   = $this->makePages($count, $this->cfg['items_per_page'], $pageUrl);
 		
 		$this->lang['wiki_pages'] = sprintf($this->lang['wiki_pages'], $pages[4], $pages[3]);
@@ -312,7 +312,8 @@ class special_preferences extends core
 				$row['mark_new'] = false;
 			}
 			
-			$row['page_name']        = $this->getUniqueName($row);
+			$row['page_name_raw']    = $this->getUniqueName($row);
+			$row['page_name']        = htmlentities(str_replace('_', ' ', $this->getUniqueName($row)));
 			$row['page_last_change'] = $this->convertTime($row['page_last_change']);
 			
 			$bookmarks[] = $row;

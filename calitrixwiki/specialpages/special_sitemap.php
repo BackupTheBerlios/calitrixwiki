@@ -51,13 +51,13 @@ class special_sitemap extends core
 					$pages['#'] = array();
 				}
 				
-				$pages['#'][] = $this->getUniqueName($row);
+				$pages['#'][] = array('name' => htmlentities($this->getUniqueName($row)), 'raw' => $this->getUniqueName($row));
 			} else {
 				if(!isset($pages[$char])) {
 					$pages[$char] = array();
 				}
 				
-				$pages[$char][] = $this->getUniqueName($row);
+				$pages[$char][] = array('name' => htmlentities($this->getUniqueName($row)), 'raw' => $this->getUniqueName($row));
 			}
 		}
 		

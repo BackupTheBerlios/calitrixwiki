@@ -234,8 +234,8 @@ class special_adminusers extends admin
 		$tpl->assign('cfgOp',           'edit');
 		$tpl->assign('cfgUserId',       $user['user_id']);
 		$tpl->assign('cfgGroupId',      $user['user_group_id']);
-		$tpl->assign('cfgUserName',     htmlentities($user['user_name']));
-		$tpl->assign('cfgUserEmail',    htmlentities($user['user_email']));
+		$tpl->assign('cfgUserName',     $user['user_name']);
+		$tpl->assign('cfgUserEmail',    $user['user_email']);
 		$tpl->assign('cfgUseCookies',   $user['user_use_cookies']);
 		$tpl->assign('cfgUserLang',     $user['user_language']);
 		$tpl->assign('cfgUserTheme',    $user['user_theme']);
@@ -336,7 +336,7 @@ class special_adminusers extends admin
 		} elseif(!preg_match('/^'.$this->cfg['title_format'].'$/', $this->cfg['users_namespace'].':'.$userName)) {
 			$errors[] = $this->lang['admin_user_invalid_name'];
 			$isError  = true;
-		} elseif($userId > 0 && $userName != $user['user_name'] && is_array($this->getUser($userName))) {
+		} elseif($userId > 0 && $userName != $user['user_name_raw'] && is_array($this->getUser($userName))) {
 			$errors[] = $this->lang['admin_user_name_taken'];
 			$isError  = true;
 		}
@@ -470,7 +470,7 @@ class special_adminusers extends admin
 		$result  = $db->query('SELECT COUNT(*) AS count FROM '.DB_PREFIX.'users');
 		$row     = $db->fetch($result);
 		$count   = $row['count'];
-		$pageUrl = $this->genUrl($this->getUniqueName($this->page), '', array('p' => '%s'));
+		$pageUrl = $this->genUrl($this->getUniqueName($this->page), '', array('p' => '%s'), true, true);
 		$pages   = $this->makePages($count, $this->cfg['items_per_page'], $pageUrl);
 		
 		$this->lang['wiki_pages'] = sprintf($this->lang['wiki_pages'], $pages[4], $pages[3]);
@@ -485,6 +485,7 @@ class special_adminusers extends admin
 		
 		while($row = $db->fetch($result))
 		{
+			$row['user_name_raw']   = $row['user_name'];
 			$row['user_name']       = htmlentities($row['user_name']);
 			$row['user_email']      = htmlentities($row['user_email']);
 			$row['user_reg_time']   = $this->convertTime($row['user_reg_time']);

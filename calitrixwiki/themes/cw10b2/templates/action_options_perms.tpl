@@ -4,7 +4,7 @@
 
 <p><strong>{$lang.perms_change_desc}</strong></p>
 
-<form method="post" action="{wikiurl page="`$pageName`" action="options" op="perms" o="change" gid="`$groupId`"}">
+<form method="post" action="{wikiurl page="`$pageNameUnique`" action="options" op="perms" o="change" gid="`$groupId`"}">
 <table cellspacing="0" cellpadding="0" border="0">
  <tr>
   <td class="td-head">{$lang.perms_right}</td>

@@ -9,7 +9,7 @@
  </tr>
 {section name="idx" loop="$newPages"}
  <tr>
-  <td class="td-first"><a href="{wikiurl page="`$newPages[idx].page_name`"}" class="wiki-internal">{$newPages[idx].page_name}</a></td>
+  <td class="td-first"><a href="{wikiurl page="`$newPages[idx].page_name_raw`"}" class="wiki-internal">{$newPages[idx].page_name}</a></td>
   <td class="td-cell">{$newPages[idx].page_time}</td>
   <td class="td-last">{$newPages[idx].page_version}</td>
  </tr>

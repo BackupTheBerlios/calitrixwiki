@@ -13,15 +13,15 @@
   <td class="td-first">{$groupData.group_name}</td>
   <td class="td-cell">{if $groupData.perm_access_mask == 0}<span class="light-grey">{$lang.perms_mask_unchanged}</span>{else}{$groupData.perm_access_mask}{/if}</td>
   <td class="td-last">
-   <a href="{wikiurl page="`$pageName`" action="options" op="perms" o="change" gid="`$groupId`"}" class="wiki-internal">{$lang.perms_edit_perms}</a> | 
-   <a href="{wikiurl page="`$pageName`" action="options" op="perms" o="reset" gid="`$groupId`"}" class="wiki-internal">{$lang.perms_reset_perms}</a></td>
+   <a href="{wikiurl page="`$pageNameUnique`" action="options" op="perms" o="change" gid="`$groupId`"}" class="wiki-internal">{$lang.perms_edit_perms}</a> | 
+   <a href="{wikiurl page="`$pageNameUnique`" action="options" op="perms" o="reset" gid="`$groupId`"}" class="wiki-internal">{$lang.perms_reset_perms}</a></td>
  </tr>
  {/foreach}
 </table>
 
 <br />{/if}
 
-{if $canRename}<form method="post" action="{wikiurl page="`$pageName`" action="options" op="rename"}">
+{if $canRename}<form method="post" action="{wikiurl page="`$pageNameUnique`" action="options" op="rename"}">
 <fieldset>
 <legend>{$lang.options_rename}</legend>
 <span class="light-grey">{$lang.options_rename_desc}</span><br /><br />
@@ -31,13 +31,13 @@
 <option value="{$nSpace}"{if $nSpace == $pageNamespace} selected="selected"{/if}>{$nSpace}</option>
 {/foreach}
 </select>:
-<input type="text" name="new_name" size="40" value="{$pageNameOnly}" /><br /><br />
+<input type="text" name="new_name" size="40" value="{$pageName}" /><br /><br />
 
 <input type="submit" value="{$lang.options_rename_submit}" />
 </fieldset>
 </form>{/if}
 
-{if $canDelete}<form method="post" action="{wikiurl page="`$pageName`" action="options" op="delete"}">
+{if $canDelete}<form method="post" action="{wikiurl page="`$pageNameUnique`" action="options" op="delete"}">
 <fieldset>
 <legend>{$lang.options_delete}</legend>
 <span class="light-grey">{$lang.options_delete_desc}</span><br /><br />
