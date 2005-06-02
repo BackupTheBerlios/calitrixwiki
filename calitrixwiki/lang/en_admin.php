@@ -27,6 +27,7 @@ $lang = array(
 'admin_config_users'           => 'Members',
 'admin_config_mailing'         => 'Mailing',
 'admin_config_namespaces'      => 'Namespaces',
+'admin_config_uploads'         => 'Uploads',
 'admin_config_paths'           => 'Paths &amp; adresses',
 'admin_config_parser'          => 'Parser',
 'admin_config_urlrewrite'      => 'URL rewriting',
@@ -103,6 +104,12 @@ $lang = array(
 'admin_config_default_nspace'  => 'Default namespace',
 'admin_config_special_nspace'  => 'Namespace for special pages',
 'admin_config_user_nspace'     => 'Namespace for member pages',
+
+'admin_config_uploads_desc'    => 'Preferences related to attachments in articles.',
+'admin_config_enable_uploads'  => 'Enable uploads',
+'admin_config_upload_types'    => 'Allowed file types',
+'admin_config_upload_size'     => 'Maximum file size (KB)',
+'admin_config_upload_list'     => 'Display a list of attachments below articles.',
 
 'admin_config_paths_desc'      => 'You can modify the paths and adresses where the Wiki searches it\'s program files.',
 'admin_config_url_root'        => 'Root adress of this Wiki',

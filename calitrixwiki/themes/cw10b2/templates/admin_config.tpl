@@ -158,6 +158,27 @@
 </fieldset>
 </form>
 
+<a name="config-uploads"></a>
+<form method="post" action="{wikiurl page="`$cfg.special_namespace`:AdminConfig"}">
+<input type="hidden" name="change" value="uploads" />
+<fieldset>
+<legend>{$lang.admin_config_uploads}</legend>
+<span class="light-grey">{$lang.admin_config_uploads_desc}</span><br /><br />
+
+<input type="checkbox" name="enable_uploads" id="enable-uploads"{if $cfgEnableUploads == 1} checked="checked"{/if} /><label for="enable-uploads">{$lang.admin_config_enable_uploads}</label><br /><br />
+
+{$lang.admin_config_upload_types}<br />
+<input type="text" name="upload_types" size="50" value="{$cfgUploadTypes}" /><br /><br />
+
+{$lang.admin_config_upload_size}<br />
+<input type="text" name="upload_size" size="6" value="{$cfgUploadSize}" /><br /><br />
+
+<input type="checkbox" name="upload_list" id="upload_list"{if $cfgUploadList == 1} checked="checked"{/if} /><label for="upload_list">{$lang.admin_config_upload_list}</label><br /><br />
+
+<input type="submit" value="{$lang.admin_config_submit}" />
+</fieldset>
+</form>
+
 <a name="config-paths"></a>
 <form method="post" action="{wikiurl page="`$cfg.special_namespace`:AdminConfig"}">
 <input type="hidden" name="change" value="paths" />

@@ -33,6 +33,7 @@
     <li><a href="{wikiurl page="`$cfg.special_namespace`:AdminConfig"}#config-users">{$lang.admin_config_users}</a></li>
     <li><a href="{wikiurl page="`$cfg.special_namespace`:AdminConfig"}#config-mailing">{$lang.admin_config_mailing}</a></li>
     <li><a href="{wikiurl page="`$cfg.special_namespace`:AdminConfig"}#config-namespaces">{$lang.admin_config_namespaces}</a></li>
+    <li><a href="{wikiurl page="`$cfg.special_namespace`:AdminConfig"}#config-uploads">{$lang.admin_config_uploads}</a></li>
     <li><a href="{wikiurl page="`$cfg.special_namespace`:AdminConfig"}#config-paths">{$lang.admin_config_paths}</a></li>
     <li><a href="{wikiurl page="`$cfg.special_namespace`:AdminConfig"}#config-parser">{$lang.admin_config_parser}</a></li>
     <li><a href="{wikiurl page="`$cfg.special_namespace`:AdminConfig"}#config-urlrewrite">{$lang.admin_config_urlrewrite}</a></li>

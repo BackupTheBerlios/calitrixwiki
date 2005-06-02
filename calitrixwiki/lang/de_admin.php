@@ -27,6 +27,7 @@ $lang = array(
 'admin_config_users'           => 'Mitglieder',
 'admin_config_mailing'         => 'E-Mails',
 'admin_config_namespaces'      => 'Namensr&auml;ume',
+'admin_config_uploads'         => 'Dateianh&auml;nge',
 'admin_config_paths'           => 'Pfade &amp; Adressen',
 'admin_config_parser'          => 'Parser',
 'admin_config_urlrewrite'      => 'Adressumschreibung',
@@ -101,6 +102,12 @@ $lang = array(
 'admin_config_default_nspace'  => 'Standardnamensraum',
 'admin_config_special_nspace'  => 'Namensraum f&uuml;r Spezialseiten',
 'admin_config_user_nspace'     => 'Namensraum f&uuml;r Mitgliederseiten',
+
+'admin_config_uploads_desc'    => 'Einstellungen die Dateianh&auml;nge in Artikeln beeinflussen.',
+'admin_config_enable_uploads'  => 'Dateianh&auml;nge aktivieren',
+'admin_config_upload_types'    => 'Erlaubte Dateitypen',
+'admin_config_upload_size'     => 'Maximale Dateigr&ouml;ße (KB)',
+'admin_config_upload_list'     => 'Liste der Anh&auml;nge unter Artikeln anzeigen.',
 
 'admin_config_paths_desc'      => 'Sie k&ouml;nnen hier die Pfade und Adressen angeben unter denen das Wiki erreichbar ist und wo es seine Bibliotheken und Scripts sucht.',
 'admin_config_url_root'        => 'Adresse unter der ihr Wiki erreichbar ist',
