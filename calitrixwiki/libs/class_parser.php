@@ -1094,7 +1094,7 @@ class parser
 		$trailPages = array();
 		
 		$text      = $page['page_text'];
-		$text      = preg_replace('/^(\*|#)+ (?:\[\[)?('.$wiki->cfg['title_format'].')/me', '$this->getTrailPage(\'\2\', &$trailPages)', $text);
+		$text      = preg_replace('/^(\*|#)+ (?:\[\[)?('.$wiki->cfg['title_format'].')/me', '$this->getTrailPage(\'\2\', $trailPages)', $text);
 		$linkLeft  = '';
 		$linkRight = '';
 		
