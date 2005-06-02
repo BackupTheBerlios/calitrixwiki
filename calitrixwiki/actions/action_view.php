@@ -77,6 +77,10 @@ class action_view extends core
 		}
 		
 		if(!headers_sent()) {
+			if($page['page_id'] < 1) {
+				header($this->server['SERVER_PROTOCOL'].' 404 Not Found');
+			}
+			
 			header('Content-Disposition: inline; filename='.$this->page['page_name'].'.html');
 		}
 	}
