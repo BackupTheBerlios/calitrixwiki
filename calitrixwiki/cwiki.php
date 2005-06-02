@@ -43,6 +43,8 @@ define('PERM_VIEW',        1);    // Permission to view pages.
 define('PERM_EDIT',        2);    // Permission to edit pages.
 define('PERM_HISTORY',     4);    // Permission to view the history.
 define('PERM_RESTORE',     8);    // Permission to restore old versions.
+define('PERM_UPLOAD',      16);   // Permission to upload attachments
+define('PERM_MUPLOADS',    32);   // Permission to manage uploads
 define('PERM_RENAME',      128);  // Permission to rename a page.
 define('PERM_DELETE',      256);  // Permission to delete a page.
 define('PERM_IGNORELOCAL', 512);  // Permission to ignore local access masks.
