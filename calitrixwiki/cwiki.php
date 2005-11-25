@@ -135,6 +135,6 @@ $steps         = $creationtime / 100;
 $php_percent   = round(($creationtime - $db->runtimes) / $steps, 2);
 $mysql_percent = round($db->runtimes / $steps, 2);
 
-//echo "<div style=\"text-align:left\"><br><br><span style=\"font-size:11px\">\n[Runtime: $creationtime secs | {$db->queries} db querys in ".round($db->runtimes, 3)." secs | $php_percent% PHP | $mysql_percent% MySQL]";
-//echo "<br><br>".$db->query_debug."</span></div>";
+echo "<div style=\"text-align:left\"><br><br><span style=\"font-size:11px\">\n[Runtime: $creationtime secs | {$db->queries} db querys in ".round($db->runtimes, 3)." secs | $php_percent% PHP | $mysql_percent% MySQL]";
+echo "<br><br>".$db->query_debug."</span></div>";
 ?>

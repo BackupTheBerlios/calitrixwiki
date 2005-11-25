@@ -101,6 +101,14 @@
   <td class="td-last"><input type="checkbox" name="perm_delete"{if $cfgPermDelete} checked="checked"{/if} /></td>
  </tr>
  <tr>
+  <td class="td-first">{$lang.admin_user_right_upload}</td>
+  <td class="td-last"><input type="checkbox" name="perm_upload"{if $cfgPermUpload} checked="checked"{/if} /></td>
+ </tr>
+ <tr>
+  <td class="td-first">{$lang.admin_user_right_muploads}</td>
+  <td class="td-last"><input type="checkbox" name="perm_muploads"{if $cfgPermMUploads} checked="checked"{/if} /></td>
+ </tr>
+ <tr>
   <td class="td-first">{$lang.admin_user_right_ignore_local}</td>
   <td class="td-last"><input type="checkbox" name="perm_iglocal"{if $cfgPermIgLocal} checked="checked"{/if} /></td>
  </tr>

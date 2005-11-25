@@ -204,6 +204,9 @@ class parser
 		                     '$this->parseWikiTrail(\'\1\', \'\2\')',
 		                     $text); // Parse wiki trails
 		
+		
+		$this->parseUploads($text);
+		
 		// Parse wiki style classes and wiki styles
 		while(preg_match('/%[A-Za-z0-9_-]+%.+?%%/s', $text))
 		{
@@ -221,7 +224,7 @@ class parser
 		
 		// All markups are done. Now we can safely insert plugins which may insert
 		// own formatings.
-		if(preg_match_all('/\{([A-Za-z0-9_]+)( (?:[A-Za-z0-9_]+=&quot;(?:.*?)&quot; ?)*)?\}(?:(.*?)\{\/\1\})?/e', $text, $matches) > 0) {
+		if(preg_match_all('/\{([A-Za-z0-9_]+)( (?:[A-Za-z0-9_]+=&quot;(?:.*?)&quot; ?)*)?\}(?:(.*?)\{\/\1\})?/sie', $text, $matches) > 0) {
 			$pluginCalls = $this->parseWikiPlugins($matches);
 			
 			foreach($pluginCalls as $pluginInfo)
@@ -1139,7 +1142,6 @@ class parser
 	 * Extracts the page name at the beginning of a list item
 	 *
 	 * @author Johannes Klose <exe@calitrix.de>
-	 * @since 1.0 Beta 1 03.06.04 22:53
 	 * @param string $listItem   Name of the trail page
 	 * @param string $trailPages Reference to the trail pages array
 	 * @return string            Empty string
@@ -1148,6 +1150,117 @@ class parser
 	{
 		$trailPages[] = $trailPage;
 		return '';
+	}
+	
+	/**
+	 * Parses the uploaded files in the page text.
+	 *
+	 * @param  string &$text Page text
+	 * @return bool   true on success, false otherwise
+	 **/
+	function parseUploads(&$text)
+	{
+		$db = &singleton('database');
+		
+		if(preg_match_all('/\{\{(.+?)\}\}/e', $text, $matches) < 1) {
+			return false;
+		}
+		
+		$markers    = $matches[0];
+		$fileNames  = array();
+		$fileParams = array();
+		$sqlFiles   = array();
+		$dbFiles    = array();
+		
+		foreach($matches[1] as $file)
+		{
+			$file = explode('|', $file);
+			$fileNames[] = $file[0];
+			$sqlFiles[]  = addslashes($file[0]);
+			
+			unset($file[0]);
+			
+			$fileParams[] = $file;
+		}
+		
+		$result = $db->query('SELECT file_id, file_orig_name, '.
+		'file_ext, file_size, file_description '.
+		'FROM '.DB_PREFIX.'uploads WHERE file_orig_name IN('.
+		'"'.join('", "', array_unique($sqlFiles)).'")');
+		
+		while($row = $db->fetch($result))
+		{
+			$dbFiles[$row['file_orig_name']] = $row;
+		}
+		
+		for($i = 0; $i < count($fileNames); $i++)
+		{
+			if(!isset($dbFiles[$fileNames[$i]])) {
+				$text = str_replace($markers[$i], '', $text);
+				continue;
+			}
+			
+			$name      = $fileNames[$i];
+			$mark      = $markers[$i];
+			$params    = $fileParams[$i];
+			$dbFile    = $dbFiles[$name];
+			$size      = $GLOBALS['wiki']->HRFileSize($dbFile['file_size']);
+			$thumb     = false;
+			$float     = '';
+			$width     = '';
+			$height    = '';
+			$desc      = '';
+						
+			if($dbFile['file_ext'] == 'gif'  ||
+			   $dbFile['file_ext'] == 'png'  ||
+			   $dbFile['file_ext'] == 'jpg'  ||
+			   $dbFile['file_ext'] == 'jpeg') {
+				$snippet = 'image_normal';
+				$isImage = true;
+			} else {
+				$snippet = 'file_normal';
+				$isImage = false;
+			}
+			
+			foreach($params as $param)
+			{
+				if($param == 'framed') {
+					$snippet = $isImage ? 'image_framed' : 'file_framed';
+				} elseif($param == 'thumb') {
+					$thumb = true;
+				} elseif($param == 'left') {
+					$float = ' style="float:left"';
+				} elseif($param == 'right') {
+					$float = ' style="float:right"';
+				} elseif(preg_match('/^(\d+)?x(\d+)?(px|%)$/', $param, $match)) {
+					if($isImage) {
+						$width     = $match[1] != '' ? ' width="'.$match[1].$match[3].'"' : '';
+						$height    = $match[2] != '' ? ' height="'.$match[2].$match[3].'"' : '';
+					}
+				} else {
+					$desc = $param;
+				}
+			}
+			
+			if($isImage) {
+				if($thumb) {
+					$imageUrl = $GLOBALS['wiki']->cfg['url_root'].'/uploads/img/thumbs/'.
+					$dbFile['file_id'].'.'.$dbFile['file_ext'];
+				} else {
+					$imageUrl = $GLOBALS['wiki']->cfg['url_root'].'/uploads/img/'.
+					$dbFile['file_id'].'.'.$dbFile['file_ext'];
+				}
+			} else {
+				$imageUrl = $GLOBALS['wiki']->cfg['url_root'].'/themes/'.
+				$GLOBALS['wiki']->theme.'/images/mimetypes/'.$dbFile['file_ext'].'.png';
+			}
+			
+			$fileUrl = $GLOBALS['wiki']->genUrl($GLOBALS['wiki']->cfg['special_namespace'].':Uploads', 
+			           '', array('op' => 'file', 'fid' => $dbFile['file_id']));
+			$snippet = $GLOBALS['wiki']->cfg['code_snippets'][$snippet];
+			$code    = sprintf($snippet, $imageUrl, $width, $height, $float, $desc, $fileUrl, $name, $size);
+			$text    = str_replace($mark, $code, $text);
+		}
 	}
 	
 	/**

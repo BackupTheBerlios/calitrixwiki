@@ -173,7 +173,8 @@
 {$lang.admin_config_upload_size}<br />
 <input type="text" name="upload_size" size="6" value="{$cfgUploadSize}" /><br /><br />
 
-<input type="checkbox" name="upload_list" id="upload_list"{if $cfgUploadList == 1} checked="checked"{/if} /><label for="upload_list">{$lang.admin_config_upload_list}</label><br /><br />
+{$lang.admin_config_upload_thumb}<br />
+<input type="text" name="upload_thumb" size="6" value="{$cfgUploadThumb}" /><br /><br />
 
 <input type="submit" value="{$lang.admin_config_submit}" />
 </fieldset>
@@ -209,6 +210,7 @@
 
 {$lang.admin_config_themes_dir}<br />
 <input type="text" name="themes_dir" size="50" value="{$cfgThemesDir}" /><br /><br />
+
 <input type="submit" value="{$lang.admin_config_submit}" />
 </fieldset>
 </form>

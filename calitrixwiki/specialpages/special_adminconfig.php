@@ -318,14 +318,14 @@ class special_adminconfig extends admin
 		$config = $this->getOrigConfig();
 		
 		$enableUploads = isset($this->post['enable_uploads']) ? 1 : 0;
-		$uploadTypes   = isset($this->post['upload_types'])   ? $this->post['upload_types']        : $config['default']['upload_file_types'];
-		$uploadSize    = isset($this->post['upload_size'])    ? intval($this->post['upload_size']) : $config['default']['upload_max_size'];
-		$uploadList    = isset($this->post['upload_list'])    ? 1 : 0;
+		$uploadTypes   = isset($this->post['upload_types'])   ? $this->post['upload_types']         : $config['default']['upload_file_types'];
+		$uploadSize    = isset($this->post['upload_size'])    ? intval($this->post['upload_size'])  : $config['default']['upload_max_size'];
+		$uploadThumb   = isset($this->post['upload_thumb'])   ? intval($this->post['upload_thumb']) : $config['default']['upload_thumb_size'];
 		
 		$this->setConfigItem('default', 'enable_uploads',      $enableUploads);
 		$this->setConfigItem('default', 'upload_file_types',   str_replace(' ', '', $uploadTypes));
 		$this->setConfigItem('default', 'upload_max_size',     $uploadSize);
-		$this->setConfigItem('default', 'upload_display_list', $uploadList);
+		$this->setConfigItem('default', 'upload_thumb_size',   $uploadThumb);
 		
 		$this->rewriteConfig();
 		
@@ -557,7 +557,7 @@ class special_adminconfig extends admin
 		$tpl->assign('cfgEnableUploads',    $config['default']['enable_uploads']);
 		$tpl->assign('cfgUploadTypes',      $config['default']['upload_file_types']);
 		$tpl->assign('cfgUploadSize',       $config['default']['upload_max_size']);
-		$tpl->assign('cfgUploadList',       $config['default']['upload_display_list']);
+		$tpl->assign('cfgUploadThumb',      $config['default']['upload_thumb_size']);
 	}
 	
 	/**

@@ -710,6 +710,8 @@ class core
 		$tpl->assign('canUseAcp',   $this->hasPerms(PERM_USEACP));
 		$tpl->assign('canDelete',   $this->hasPerms(PERM_DELETE));
 		$tpl->assign('canRename',   $this->hasPerms(PERM_RENAME));
+		$tpl->assign('canUpload',   $this->hasPerms(PERM_UPLOAD));
+		$tpl->assign('canMUploads', $this->hasPerms(PERM_MUPLOADS));
 		
 		/**
 		 * If the user was redirected to this page, a backlink to the

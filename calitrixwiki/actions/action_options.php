@@ -201,20 +201,20 @@ class action_options extends core
 			$accessMask = (int)$this->permGroups[$groupId]['group_access_mask'];
 		}
 		
-		$permViewChecked    = $this->hasPerms(PERM_VIEW,        $accessMask) ? ' checked="checked"' : '';
-		$permEditChecked    = $this->hasPerms(PERM_EDIT,        $accessMask) ? ' checked="checked"' : '';
-		$permHistoryChecked = $this->hasPerms(PERM_HISTORY,     $accessMask) ? ' checked="checked"' : '';
-		$permRestoreChecked = $this->hasPerms(PERM_RESTORE,     $accessMask) ? ' checked="checked"' : '';
-		$permRenameChecked  = $this->hasPerms(PERM_RENAME,      $accessMask) ? ' checked="checked"' : '';
-		$permDeleteChecked  = $this->hasPerms(PERM_DELETE,      $accessMask) ? ' checked="checked"' : '';
+		$permViewChecked     = $this->hasPerms(PERM_VIEW,        $accessMask) ? ' checked="checked"' : '';
+		$permEditChecked     = $this->hasPerms(PERM_EDIT,        $accessMask) ? ' checked="checked"' : '';
+		$permHistoryChecked  = $this->hasPerms(PERM_HISTORY,     $accessMask) ? ' checked="checked"' : '';
+		$permRestoreChecked  = $this->hasPerms(PERM_RESTORE,     $accessMask) ? ' checked="checked"' : '';
+		$permRenameChecked   = $this->hasPerms(PERM_RENAME,      $accessMask) ? ' checked="checked"' : '';
+		$permDeleteChecked   = $this->hasPerms(PERM_DELETE,      $accessMask) ? ' checked="checked"' : '';
 		
-		$tpl->assign('permViewChecked',    $permViewChecked);
-		$tpl->assign('permEditChecked',    $permEditChecked);
-		$tpl->assign('permHistoryChecked', $permHistoryChecked);
-		$tpl->assign('permRestoreChecked', $permRestoreChecked);
-		$tpl->assign('permRenameChecked',  $permRenameChecked);
-		$tpl->assign('permDeleteChecked',  $permDeleteChecked);
-		$tpl->assign('groupId',            $groupId);
+		$tpl->assign('permViewChecked',     $permViewChecked);
+		$tpl->assign('permEditChecked',     $permEditChecked);
+		$tpl->assign('permHistoryChecked',  $permHistoryChecked);
+		$tpl->assign('permRestoreChecked',  $permRestoreChecked);
+		$tpl->assign('permRenameChecked',   $permRenameChecked);
+		$tpl->assign('permDeleteChecked',   $permDeleteChecked);
+		$tpl->assign('groupId',             $groupId);
 		
 		$this->lang['perms_change_desc'] = sprintf($this->lang['perms_change_desc'], 
 		                                           $this->permGroups[$groupId]['group_name']);
@@ -232,12 +232,12 @@ class action_options extends core
 		$db  = &singleton('database');
 		$tpl = &singleton('template');
 		
-		$permView    = isset($this->post['perm_view'])    ? PERM_VIEW        : 0;
-		$permEdit    = isset($this->post['perm_edit'])    ? PERM_EDIT        : 0;
-		$permHistory = isset($this->post['perm_history']) ? PERM_HISTORY     : 0;
-		$permRestore = isset($this->post['perm_restore']) ? PERM_RESTORE     : 0;
-		$permRename  = isset($this->post['perm_rename'])  ? PERM_RENAME      : 0;
-		$permDelete  = isset($this->post['perm_delete'])  ? PERM_DELETE      : 0;
+		$permView     = isset($this->post['perm_view'])     ? PERM_VIEW        : 0;
+		$permEdit     = isset($this->post['perm_edit'])     ? PERM_EDIT        : 0;
+		$permHistory  = isset($this->post['perm_history'])  ? PERM_HISTORY     : 0;
+		$permRestore  = isset($this->post['perm_restore'])  ? PERM_RESTORE     : 0;
+		$permRename   = isset($this->post['perm_rename'])   ? PERM_RENAME      : 0;
+		$permDelete   = isset($this->post['perm_delete'])   ? PERM_DELETE      : 0;
 		
 		$newMask = $permView | $permEdit | $permHistory | $permRestore |
 		           $permRename | $permDelete;

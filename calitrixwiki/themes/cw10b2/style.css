@@ -37,7 +37,7 @@ form {
 	padding:0px;
 }
 
-input, textarea{
+input, textarea {
 	border-right:1px #ababab solid;
 	border-bottom:1px #ababab solid;
 	border-left:1px #656565 solid;
@@ -209,6 +209,10 @@ fieldset legend {
 	font-weight:bold;
 }
 
+td {
+	padding:3px;
+}
+
 td.td-head {
 	border-bottom:1px #083760 solid;
 	color:#083760;
@@ -231,6 +235,13 @@ td.td-cell {
 td.td-last {
 	padding:3px;
 	border-bottom:1px #efefef solid;
+}
+
+td.td-box {
+	background:#fafafa;
+	border:1px #efefef solid;
+	text-align:center;
+	vertical-align:middle;
 }
 
 span.light-grey {
@@ -272,6 +283,39 @@ div.wiki-toc a {
 
 div.wiki-toc a:hover {
 	text-decoration:underline;
+}
+
+table.img-framed {
+	padding:0px;
+	margin:5px;
+	background-color:#fafafa;
+	border:1px #efefef solid;
+	color:#000000;
+	font-size:84%;
+	width:1%;
+}
+
+table.img-framed tr td {
+	padding:1px;
+}
+
+table.file-framed {
+	padding:0px;
+	margin:5px;
+	background-color:#fafafa;
+	border:1px #efefef solid;
+	color:#000000;
+	font-size:84%;
+	width:auto;
+}
+
+table.file-framed tr td {
+	padding:1px;
+}
+
+table.file-framed tr td img {
+	float:left;
+	margin-right:5px;
 }
 
 #message-end {

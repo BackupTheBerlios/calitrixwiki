@@ -118,6 +118,8 @@ class special_adminusers extends admin
 		$tpl->assign('cfgPermRestore',  false);
 		$tpl->assign('cfgPermRename',   false);
 		$tpl->assign('cfgPermDelete',   false);
+		$tpl->assign('cfgPermUpload',   false);
+		$tpl->assign('cfgPermMUploads', false);
 		$tpl->assign('cfgPermIgLocal',  false);
 		$tpl->assign('cfgPermSetLocal', false);
 		$tpl->assign('cfgPermUseAcp',   false);
@@ -248,6 +250,8 @@ class special_adminusers extends admin
 		$tpl->assign('cfgPermRestore',  $this->hasPerms(PERM_RESTORE,     $accessMask));
 		$tpl->assign('cfgPermRename',   $this->hasPerms(PERM_RENAME,      $accessMask));
 		$tpl->assign('cfgPermDelete',   $this->hasPerms(PERM_DELETE,      $accessMask));
+		$tpl->assign('cfgPermUpload',   $this->hasPerms(PERM_UPLOAD,      $accessMask));
+		$tpl->assign('cfgPermMUploads', $this->hasPerms(PERM_MUPLOADS,    $accessMask));
 		$tpl->assign('cfgPermIgLocal',  $this->hasPerms(PERM_IGNORELOCAL, $accessMask));
 		$tpl->assign('cfgPermSetLocal', $this->hasPerms(PERM_SETLOCAL,    $accessMask));
 		$tpl->assign('cfgPermUseAcp',   $this->hasPerms(PERM_USEACP,      $accessMask));
@@ -312,11 +316,13 @@ class special_adminusers extends admin
 			$permRestore  = isset($this->post['perm_restore'])   ? PERM_RESTORE     : 0;
 			$permRename   = isset($this->post['perm_rename'])    ? PERM_RENAME      : 0;
 			$permDelete   = isset($this->post['perm_delete'])    ? PERM_DELETE      : 0;
+			$permUpload   = isset($this->post['perm_upload'])    ? PERM_UPLOAD      : 0;
+			$permMUploads = isset($this->post['perm_muploads'])  ? PERM_MUPLOADS    : 0;
 			$permIglocal  = isset($this->post['perm_iglocal'])   ? PERM_IGNORELOCAL : 0;
 			$permSetlocal = isset($this->post['perm_setlocal'])  ? PERM_SETLOCAL    : 0;
 			$permUseacp   = isset($this->post['perm_useacp'])    ? PERM_USEACP      : 0;
 			
-			$saveMask = $permView | $permEdit | $permHistory | $permRestore | $permRename | $permDelete | $permIglocal | $permSetlocal | $permUseacp;
+			$saveMask = $permView | $permEdit | $permHistory | $permRestore | $permRename | $permDelete | $permUpload | $permMUploads | $permIglocal | $permSetlocal | $permUseacp;
 		} else {
 			$usePerms = 'group';
 			$saveMask = -1;
@@ -408,6 +414,8 @@ class special_adminusers extends admin
 			$tpl->assign('cfgPermRestore',  $this->hasPerms(PERM_RESTORE,     $accessMask));
 			$tpl->assign('cfgPermRename',   $this->hasPerms(PERM_RENAME,      $accessMask));
 			$tpl->assign('cfgPermDelete',   $this->hasPerms(PERM_DELETE,      $accessMask));
+			$tpl->assign('cfgPermUpload',   $this->hasPerms(PERM_UPLOAD,      $accessMask));
+			$tpl->assign('cfgPermMUploads', $this->hasPerms(PERM_MUPLOADS,    $accessMask));
 			$tpl->assign('cfgPermIgLocal',  $this->hasPerms(PERM_IGNORELOCAL, $accessMask));
 			$tpl->assign('cfgPermSetLocal', $this->hasPerms(PERM_SETLOCAL,    $accessMask));
 			$tpl->assign('cfgPermUseAcp',   $this->hasPerms(PERM_USEACP,      $accessMask));
