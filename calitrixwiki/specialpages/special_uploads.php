@@ -535,9 +535,9 @@ class special_uploads extends core
 				}
 			}
 			
-			$db->query('INSERT INTO '.DB_PREFIX.'uploads(file_local_name, file_orig_name, '.
+			$db->query('INSERT INTO '.DB_PREFIX.'uploads(file_orig_name, '.
 			'file_ext, file_size, file_user_id, file_user_name, file_description, file_upload_time) '.
-			'VALUES("'.$file['local'].'", "'.addslashes($file['name']).'", "'.$file['ext'].'", '.
+			'VALUES("'.addslashes($file['name']).'", "'.$file['ext'].'", '.
 			$file['size'].', '.$this->fileUserId.', "'.addslashes($this->fileUserName).'", '.
 			'"'.addslashes($this->fileDesc).'", '.$this->time.')');
 			
