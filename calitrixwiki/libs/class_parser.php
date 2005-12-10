@@ -770,9 +770,11 @@ class parser
 		if(!isset($this->linkedPages[$pid])) {
 			$this->linkedPages[$pid] = 1;
 			return $this->makeWikiLink($page, '', '', $namespace.':');
-		} elseif($this->linkedPages[$pid] < $this->cfg['link_num']) {
+		} elseif($this->linkedPages[$pid] < $wiki->cfg['link_num']) {
 			$this->linkedPages[$pid]++;
 			return $this->makeWikiLink($page, '', '', $namespace.':');
+		} else {
+			return $orig;
 		}
 	}
 	
