@@ -69,7 +69,7 @@ class parser
 		$this->userVars['PageName']         = $page['page_name'];
 		$this->userVars['PageNameSpaced']   = $this->spaceWikiWord($this->userVars['PageName']);
 		$this->userVars['PageVersion']      = $page['page_version'];
-		$this->userVars['PageLastModified'] = $wiki->convertTime($wiki->cfg['date_format'], $page['page_last_change']);
+		$this->userVars['PageLastModified'] = $wiki->convertTime($page['page_last_change']);
 		$this->userVars['DefaultPage']      = $wiki->cfg['default_page'];
 		
 		$this->userVars['CurrentMinute']    = date('i',         $wiki->time);
