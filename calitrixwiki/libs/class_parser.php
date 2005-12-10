@@ -144,7 +144,7 @@ class parser
 		
 		// Before we start with links we must parse image tags.
 		$text = preg_replace('/\[\[(([a-z]+)\:\/\/[a-zA-Z0-9\-\.]+([\S]*?)(\.(gif|jpg|jpeg|png|bmp|tiff)))'.
-		                     '( (\d+)?,(\d+)?)?( (left|right|none))?( (.+?))?\]\]/e',
+		                     '( (\d+)?,(\d+)?)?( (left|right|none))?( (.+?))?\]\]/ie',
 		                     '$this->doImage(\'\1\', \'\7\', \'\8\', \'\10\', \'\12\')',
 		                     $text); // Parse images
 		
