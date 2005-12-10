@@ -20,10 +20,10 @@
 </form>
 
 <h3>{$lang.history_info}</h3>
-<span class="wikiBold">{$lang.history_version_info}:</span>
+<strong>{$lang.history_version_info}:</strong>
 {$lang.history_version_desc}<br /><br />
 
-<span class="wikiBold">{$lang.history_restore_info}:</span>
+<strong>{$lang.history_restore_info}:</strong>
 {$lang.history_restore_desc}
 
 {include file="page_cmds.tpl"}
