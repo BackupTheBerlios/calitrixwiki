@@ -15,7 +15,7 @@
 
 <div id="wrapper">
  <div id="header">
-  <img src="{$urlRoot}/themes/cw10b2/images/logo.gif" id="logo" />
+  <a href="{$urlRoot}"><img src="{$urlRoot}/themes/cw10b2/images/logo.gif" id="logo" /></a>
   <div id="searchbox">
    <form method="get" action="{wikiurl page="`$cfg.special_namespace`:Search"}">
    <input type="hidden" name="page" value="{$cfg.special_namespace}:Search" />
